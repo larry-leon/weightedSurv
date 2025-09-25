@@ -1,6 +1,9 @@
 ---
-title: "Weighted Cox Example 1"
-output: html_document
+title: "Weighted Cox Example under Strong Null"
+output: 
+  html_document:
+         code_folding: hide
+
 ---
 
 ```{r setup, include=FALSE}
@@ -8,42 +11,11 @@ knitr::opts_chunk$set(echo = TRUE, warning = FALSE, messages = FALSE)
 rm(list=ls())
 
 library(survival)
-library(weightedKMplots)
 library(tinytex)
 library(dplyr)
 library(data.table)
 library(gt)
-
-# Updated 
-# source('../R/kmplotting_helpers.R')
-# source('../R/weightedCox_simulations_helpers.R')
-# source('../R/weightedCox.R')
-# source('../R/weighted_helpers.R')
-# source('../R/df_counting.R')
-# source('../R/df_counting_helpers.R')
-# source('../R/km_wlr_calculations_helpers.R')
-
-
-# load these prior
-# source("R/kmplotting_helpers.R")
-# source("R/df_counting.R")
-# source("R/df_counting_helpers.R")
-# source("R/km_wlr_calculations_helpers_revised.R")
-# source("R/weightedCox.R")
-# source("R/weighted_helpers_revised.R")
-# source("R/weightedCox_simulations_helpers_revised.R")
-
-
-source('../R/kmplotting_helpers.R')
-source('../R/weighted_helpers_revised.R')
-source('../R/df_counting.R')
-source('../R/df_counting_helpers.R')
-source('../R/km_wlr_calculations_helpers_revised.R')
-source('../R/rmst_calculations.R')
-source("../R/weightedCox_revised.R")
-source("../R/weightedCox_simulations_helpers_revised.R")
-
-
+library(weightedSurv)
 
 ```
 
@@ -51,8 +23,8 @@ source("../R/weightedCox_simulations_helpers_revised.R")
 
 ```{r, eval=FALSE}
 # Brute force to identify Strong Null simulation where FH(0,1) rejects but fh_exp2 does not 
-load("~/Library/CloudStorage/OneDrive-MerckSharp&DohmeLLC/documents/GitHub/weightedKMplots/vignettes/results/wCoxsims1_linux_5k.RData")
-#load("/media/larryleon/My Projects/GitHub/weightedKMplots/vignettes/results/wCoxsims1_linux_5k.RData")
+load("results/simulations1_10k.RData")
+
 # Extract strong-null scenario
 library(simtrial)
 sim_setup <- res_out$get_setup 
@@ -90,8 +62,8 @@ if(z_rg > 1.96 & z_fh < 1.96) cat("Check this out=",c(ss),"\n")
 
 # Simulate example
 ```{r}
-load("~/Library/CloudStorage/OneDrive-MerckSharp&DohmeLLC/documents/GitHub/weightedKMplots/vignettes/results/wCoxsims1_linux_5k.RData")
-#load("/media/larryleon/My Projects/GitHub/weightedKMplots/vignettes/results/wCoxsims1_linux_5k.RData")
+load("results/simulations1_10k.RData")
+
 # Extract strong-null scenario
 library(simtrial)
 sim_setup <- res_out$get_setup 
@@ -126,12 +98,13 @@ dfcount <- get_dfcounting(df=dfa, tte.name = "tte", event.name = "event", treat.
 
 
 
-
+# Plot simulated data
 
 ```{r, fig.width = 8, fig.height=6}
 plot_weighted_km(dfcount=dfcount, conf.int=TRUE, show.logrank = TRUE, ymax = 1.05)
 title(main="Simulated data")
 ```
+# KM differences
 
 ```{r, fig.width = 8, fig.height=6}
   temp <- plotKM.band_subgroups(
@@ -149,8 +122,7 @@ title(main="Simulated data")
 
 
 
-
-```{r, fig.width = 8, fig.height=6, eval = FALSE}
+```{r, fig.width = 8, fig.height=6, eval = FALSE, message = FALSE, warning = FALSE}
 g <- plot_weight_schemes(dfcount)
 print(g)
 ```
@@ -201,6 +173,7 @@ plot(temp$time, z01-z1, xlab="time", ylab="FH(0,1) - FH_exp2", type="s")
 
 ```
 
+# Weighted Cox model analyses
 
 ```{r}
 
