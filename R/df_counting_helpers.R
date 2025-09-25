@@ -26,6 +26,8 @@ get_dfcounting <- function(df, tte.name, event.name, treat.name, arms, by.risk=1
   })
 }
 
+
+
 #' Checking results
 #' @export
 
