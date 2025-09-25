@@ -1,0 +1,586 @@
+---
+title: "Weighted KM Plots Examples"
+output: html_document
+---
+# Survival Analysis and KM Plotting 
+
+Survival Analysis and Kaplan-Meier plotting functions
+
+## Analysis functions
+
+### df_counting
+Prepares a comprehensive dataset for survival analysis using the counting process approach. Computes risk sets, event counts, Kaplan-Meier estimates, log-rank (Fleming-Harrington ($\rho,\gamma$) weights) and Cox model results, and quantile estimates for two groups (e.g., treatment and control), optionally handling (subject-specific case) weights (such as inverse probability weights) and stratification.
+
+Time-dependent weights for log-rank statistics are implemented via *wt.rg.S* function: Supporting a variety of commonly used and custom weighting schemes for weighted log-rank and related tests. The function is flexible and can be used for Fleming-Harrington, Schemper, Xu & O'Quigley (XO), Maggir-Burman (MB), custom time-based, and exponential variants of Fleming-Harrington weights.
+
+*Key Features:*
+- Calculates weights for use in weighted log-rank and related survival tests.
+- Supports standard Fleming-Harrington weights (`scheme = "fh"`).
+- Implements Schemper weights (`scheme = "schemper"`), XO weights (`scheme = "XO"`), MB weights (`scheme = "MB"`).
+- Allows for custom time-based weights (`scheme = "custom_time"`).
+- Supports exponential variants of Fleming-Harrington weights (`scheme = "fh_exp1"`, `scheme = "fh_exp2"`).
+
+*Typical Inputs:*
+- `S`: Kaplan-Meier survival curve (vector).
+- `scheme`: Weighting scheme (e.g., `"fh"`, `"schemper"`, `"XO"`, `"MB"`, `"custom_time"`, `"fh_exp1"`, `"fh_exp2"`).
+- `rho`, `gamma`: Weighting parameters (for `"fh"`).
+- `Scensor`: *(Optional)* Censoring distribution (for `"schemper"`).
+- `Ybar`: *(Optional)* Risk set sizes (for `"XO"`).
+- `tpoints`, `t.tau`, `w0.tau`, `w1.tau`: *(Optional)* For custom time-based weights.
+- `mb_tstar`: *(Optional)* For MB weights.
+- `details`: *(Optional)* Logical; whether to return detailed output.
+
+*Typical Outputs:*
+- A vector of weights corresponding to the input time points (or a list with details if `details = TRUE`).
+
+*Main Steps:*
+1. Determines the weighting scheme based on the `scheme` argument.
+2. Computes weights using the chosen formula and input survival/censoring curves.
+3. Handles special cases for Schemper, XO, MB, custom time-based, and exponential FH weights.
+4. Returns the computed weight vector (or details if requested).
+
+```{r, echo = FALSE}
+library(DiagrammeR)
+# Define the flowchart in DOT syntax with horizontal layout
+flowchart <- grViz('digraph wt_rg_S_flowchart {
+  rankdir = LR
+  node [shape = box, style = filled, fillcolor = "#e3e3e3"]
+  A [label = "Start: Call wt.rg.S"]
+  B [label = "Input Validation"]
+  C [label = "Which scheme?"]
+  D [label = "FH: S_left^rho * (1 - S_left)^gamma"]
+  E [label = "Schemper: S_left / Scensor_left"]
+  F [label = "XO: S_left / Ybar"]
+  G [label = "MB: 1 / max(S_left, Shat_tzero)"]
+  H [label = "custom_time: w0.tau or w1.tau by t.tau"]
+  I [label = "fh_exp1: exp(S_left^0.5 * (1 - S_left)^0.5)"]
+  J [label = "fh_exp2: pmin(exp(wt01), wmax)"]
+  K [label = "Return weights"]
+  L [label = "If details=TRUE, return list; else, return weights"]
+  M [label = "End"]
+
+  A -> B -> C
+  C -> D [label = "fh"]
+  C -> E [label = "schemper"]
+  C -> F [label = "XO"]
+  C -> G [label = "MB"]
+  C -> H [label = "custom_time"]
+  C -> I [label = "fh_exp1"]
+  C -> J [label = "fh_exp2"]
+  D -> K
+  E -> K
+  F -> K
+  G -> K
+  H -> K
+  I -> K
+  J -> K
+  K -> L -> M
+}
+', width = 800, height =400)
+# Display the flowchart
+flowchart
+```
+
+### plot_weighted_km
+
+Creates Kaplan-Meier survival plots for two groups (e.g., treatment vs. control), allowing for the use of weights (such as inverse probability weights) in the estimation. The function can display survival curves, confidence intervals, risk tables, and optionally subgroup curves or additional annotations.
+
+### KM_diff
+KM_diff compares Kaplan-Meier survival curves between two groups (typically treatment vs. control) using time-to-event data. It calculates survival estimates, their differences, and provides both pointwise and simultaneous confidence intervals. The function can also perform resampling to construct simultaneous confidence bands.
+
+Allows for arbitrary weights (non-negative) to implement (for example) propensity-score adjustment (IPW).
+
+### plotKM.band_subgroups
+
+Plots the difference (via KM_diff calculations) in Kaplan-Meier survival curves between two groups (e.g., treatment vs. control), optionally including simultaneous confidence bands and subgroup curves. The function also displays risk tables for the overall population and specified subgroups.
+
+
+### wlr_dhat_estimates
+
+Computes the weighted log-rank test statistic, its variance, the difference in survival between two groups at a specified time point (`tzero`), the variance of this difference, their covariance, and correlation. It supports flexible time-dependent weighting schemes via the `wt.rg.S` function.
+
+
+
+```{r, message = FALSE}
+rm(list=ls())
+library(tinytex)
+library(survival)
+# to install weightedKMplots
+# library(devtools)
+# github_install("larry-leon/weightedSurv")
+library(weightedSurv)
+```
+---- Data Preparation ----
+Prepare GBSG data
+```{r}
+
+library(survival)
+df_gbsg <- gbsg
+df_gbsg$tte <- df_gbsg$rfstime / 30.4375
+df_gbsg$event <- df_gbsg$status
+df_gbsg$treat <- df_gbsg$hormon
+
+tte.name <- "tte"
+event.name <- "event"
+treat.name <- "treat"
+arms <- c("treat", "control")
+
+```
+---- Main Analyses ----
+
+GBSG - ITT Analysis
+```{r}
+# Returns standard log-rank (FH(0,0) via scheme="fh" rho,gamma = 0 in scheme_params)
+dfcount_gbsg <- df_counting(df=df_gbsg, tte.name=tte.name, event.name=event.name, treat.name=treat.name, arms=arms, 
+by.risk = 12, scheme = "fh", scheme_params = list(rho = 0, gamma =0), lr.digits = 4, cox.digits =3)
+```
+
+```{r, eval=FALSE}
+# MB weighting
+#test <- df_counting(df=df_gbsg, tte.name=tte.name, event.name=event.name, treat.name=treat.name, arms=arms, scheme = "MB", scheme_params = list(mb_tstar = 12))
+# 0/1 weighting (0 for time <= t.tau, 1 for time > t.tau)
+#test <- df_counting(df=df_gbsg, tte.name=tte.name, event.name=event.name, treat.name=treat.name, arms=arms, scheme = "custom_time", scheme_params = list(t.tau = 6, w0.tau = 0, w1.tau =1))
+```
+
+  
+# Show some weight functions
+
+```{r, fig.width = 10, fig.height=6}
+g <- plot_weight_schemes(dfcount_gbsg)
+print(g)
+
+```
+
+
+
+---- Plotting ----
+GBSG KM plots
+```{r, fig.width = 10, fig.height=6}
+par(mfrow=c(1,2))
+# Mine
+# Set ymax a little above 1.0 to allow for logrank placement in topleft
+# topleft is default; xmed.fraction = 0.65 positions the display of the median estimates below the HR estimates ("topright" legend [default])
+# For details, please see summary of xmed.fraction in the Appendix below.
+plot_weighted_km(dfcount=dfcount_gbsg, conf.int=FALSE, show.logrank = TRUE, 
+                 put.legend.lr = "topleft", ymax = 1.05, xmed.fraction = 0.65)
+title(main="GBSG (trial) data un-weighted")
+# Compare with survfit
+plot_km(df=df_gbsg, tte.name=tte.name, event.name=event.name, treat.name=treat.name)
+title(main="GBSG (trial) data un-weighted
+      via survfit")
+```
+
+Include 95\% CIs
+
+```{r, fig.width = 8, fig.height=6}
+plot_weighted_km(dfcount=dfcount_gbsg, conf.int=TRUE, show.logrank = TRUE, ymax = 1.05)
+title(main="GBSG (trial) data un-weighted")
+
+```
+
+
+
+```{r, fig.width = 8, fig.height=6, eval=FALSE}
+# Optional, chunk NOT evaluated automatically (eval=FALSE)
+library(survminer)
+km_fit <- survfit(Surv(tte,event) ~ treat, data=df_gbsg)
+ggsurvplot(km_fit,conf.int=TRUE, risk.table = TRUE, break.time.by=12, xlim=c(0,86),
+           tables.height = 0.2, tables.theme = theme_cleantable(), censor=TRUE, main = "GBSG (trial) data un-weighted")
+```
+
+
+---- Propensity Score Weighting (Rotterdam) ----
+
+Prepare Rotterdam data
+```{r}
+gbsg_validate <- within(rotterdam, {
+  rfstime <- ifelse(recur == 1, rtime, dtime)
+  t_months <- rfstime / 30.4375
+  time_months <- t_months
+  status <- pmax(recur, death)
+  ignore <- (recur == 0 & death == 1 & rtime < dtime)
+  status2 <- ifelse(recur == 1 | ignore, recur, death)
+  rfstime2 <- ifelse(recur == 1 | ignore, rtime, dtime)
+  time_months2 <- rfstime2 / 30.4375
+  grade3 <- ifelse(grade == "3", 1, 0)
+  treat <- hormon
+  event <- status2
+  tte <- time_months
+  id <- as.numeric(1:nrow(rotterdam))
+  SG0 <- ifelse(er <= 0, 0, 1)
+})
+```
+Node positive only to correspond to GBSG population
+```{r}
+df_rotterdam <- subset(gbsg_validate, nodes > 0)
+```
+Propensity score model
+```{r}
+fit.ps <- glm(treat ~ age + meno + size + grade3 + nodes + pgr + chemo + er, data=df_rotterdam, family="binomial")
+pihat <- fit.ps$fitted
+pihat.null <- glm(treat ~ 1, family="binomial", data=df_rotterdam)$fitted
+wt.1 <- pihat.null / pihat
+wt.0 <- (1 - pihat.null) / (1 - pihat)
+df_rotterdam$sw.weights <- ifelse(df_rotterdam$treat == 1, wt.1, wt.0)
+# truncated weights
+df_rotterdam$sw.weights_trunc <- with(df_rotterdam, pmin(pmax(sw.weights, quantile(sw.weights, 0.05)), quantile(sw.weights, 0.95)))
+
+```
+Un-weighted and weighted analyses
+```{r}
+dfcount_rotterdam_unwtd <- get_dfcounting(df=df_rotterdam, tte.name=tte.name, event.name=event.name, treat.name=treat.name, arms=arms, by.risk=24)
+
+dfcount_rotterdam_wtd <- get_dfcounting(df=df_rotterdam, tte.name=tte.name, event.name=event.name, treat.name=treat.name, arms=arms, by.risk=24, 
+                                  weight.name="sw.weights")
+```
+
+---- Plotting Weighted vs Unweighted ----
+
+```{r, fig.width = 10, fig.height=6}
+par(mfrow=c(1,2))
+plot_weighted_km(dfcount=dfcount_rotterdam_unwtd, xmed.fraction = 0.65)
+title(main="Rotterdam un-weighted K-M curves")
+plot_weighted_km(dfcount=dfcount_rotterdam_wtd, xmed.fraction = 0.65)
+title(main="Rotterdam weighted K-M curves")
+
+```
+Compare with GBSG trial data
+```{r, fig.width = 10, fig.height=6}
+par(mfrow=c(1,2))
+plot_weighted_km(dfcount=dfcount_gbsg, conf.int = TRUE, xmed.fraction = 0.65, show.logrank = TRUE, ymax = 1.05)
+title(main="GBSG (trial) data un-weighted K-M curves")
+plot_weighted_km(dfcount=dfcount_rotterdam_wtd, conf.int = TRUE, xmed.fraction = 0.65, show.logrank = TRUE, ymax = 1.05)
+title(main="Rotterdam weighted K-M curves")
+```
+
+
+
+# Simultaneous bands and point-wise CIs
+
+Note that the first graph displays 20 (1st 20) resampled approximations to the centered survival difference 
+
+$\Delta(t) = (\widehat{S_1} - \widehat{S_0})(t) - (S_{1} - S_{0})(t)),$ for timepoints $t$ within "qtau" quartiles of the event times (i.e., for qtau = 2.5\% we calculate $\Delta$ for time points within the 2.5\% and 97.5\% quantiles).
+
+---- Simultaneous CI bands ----
+```{r, fig.width = 10, fig.height = 6}
+
+par(mfrow=c(1,2))
+ 
+ temp <- plotKM.band_subgroups(
+    df=df_rotterdam,
+    xlabel="Months", ylabel="Survival difference",
+    yseq_length=5, cex_Yaxis=0.7, risk_cex=0.7,
+    tau_add=42, by.risk = 12, risk_delta=0.075, risk.pad=0.03, ymax.pad = 0.125,
+    tte.name = tte.name, treat.name = treat.name, event.name = event.name, weight.name = "sw.weights",
+    draws.band = 1000, qtau = 0.025, show_resamples = TRUE
+  )
+  legend("topleft", c("Difference estimate", "95% pointwise CIs"),
+         lwd=c(2,1), col=c("black"), lty=c(1,2), bty="n", cex=0.7)
+  title(main="Rotterdam data
+        propensity score weighted")
+
+```
+
+
+## Compare Rotterdam observational data with propensity-score weighting and GBSG randomized data
+
+---- Simultaneous CI bands ----
+```{r, fig.width = 10, fig.height = 10}
+
+par(mfrow=c(2,2))
+ 
+ temp <- plotKM.band_subgroups(
+    df=df_rotterdam,
+    xlabel="Months", ylabel="Survival difference",
+    yseq_length=5, cex_Yaxis=0.7, risk_cex=0.7,
+    tau_add=42, by.risk = 12, risk_delta=0.075, risk.pad=0.03, ymax.pad = 0.125,
+    tte.name = tte.name, treat.name = treat.name, event.name = event.name, weight.name = "sw.weights",
+    draws.band = 1000, qtau = 0.025, show_resamples = FALSE
+  )
+  legend("topleft", c("Difference estimate", "95% pointwise CIs"),
+         lwd=c(2,1), col=c("black"), lty=c(1,2), bty="n", cex=0.7)
+  title(main="Rotterdam data
+        propensity score weighted")
+
+get_bands <- cumulative_rmst_bands(df = df_rotterdam, fit = temp$fit_itt, 
+tte.name = tte.name, event.name = event.name, treat.name = treat.name , weight.name = "sw.weights", 
+draws_sb = 1000, xlab="months", rmst_max_cex = 0.7)
+
+legend("topleft", c("Cumulative RMST estimate", "95% pointwise CIs"),
+         lwd=c(2,1), col=c("black"), lty=c(1,2), bty="n", cex=0.7)
+
+  
+
+
+temp <- plotKM.band_subgroups(
+    df=df_gbsg, 
+    Maxtau = NULL,
+    xlabel="Months", ylabel="Survival difference",
+    yseq_length=5, cex_Yaxis=0.7, risk_cex=0.7,
+    by.risk = 6, risk_delta=0.075, risk.pad=0.03,
+    tte.name = tte.name, treat.name = treat.name, event.name = event.name, 
+    draws.band = 1000, qtau = 0.025, show_resamples = FALSE
+  )
+  legend("topleft", c("Difference estimate", "95% pointwise CIs"),
+         lwd=c(2,1), col=c("black"), lty=c(1,2), bty="n", cex=0.75)
+  title(main="GBSG data")
+
+  
+get_bands <- cumulative_rmst_bands(df = df_gbsg, fit = temp$fit_itt, 
+tte.name = tte.name, event.name = event.name, treat.name = treat.name, 
+draws_sb = 1000, xlab="months", rmst_max_cex = 0.75)
+  legend("topleft", c("Cumulative RMST estimate", "95% pointwise CIs"),
+         lwd=c(2,1), col=c("black"), lty=c(1,2), bty="n", cex=0.75)
+  
+  
+```
+
+
+
+Subgroup differences along with ITT simultaneous band:
+
+Note that er=0 subgroup was identified as questionable benefit.
+
+---- Subgroup Band Plot ----
+```{r, fig.width = 8, fig.height=6}
+par(mfrow=c(1,1))
+sg_labs <- c("er == 0","er > 0", "meno == 0", "meno ==1")
+sg_cols <- c("blue", "brown", "green", "turquoise")
+
+# Randomly sample colors from the built-in palette
+# n_sg <- length(sg_labs)
+# set.seed(123) # for reproducibility
+# sg_cols <- sample(colors(), n_sg)
+
+  temp <- plotKM.band_subgroups(
+    df=df_gbsg,
+    sg_labels = sg_labs,
+    sg_colors = sg_cols,
+    xlabel="Months", ylabel="Survival difference",
+    yseq_length=5, cex_Yaxis=0.7, risk_cex=0.7,
+    tau_add=42, by.risk=6, risk_delta=0.05, risk.pad=0.03, draws.band = 5000,
+    tte.name = tte.name, treat.name = treat.name, event.name = event.name 
+  )
+  legend("topleft", c("ITT", sg_labs),
+         lwd=2, col=c("black", sg_cols), bty="n", cex=0.75)
+  title(main="ITT and subgroups")
+
+```
+
+Look at er>0 subgroup population
+
+---- Simultaneous CI bands ----
+```{r, fig.width = 12, fig.height=6}
+par(mfrow=c(1,2))
+  temp <- plotKM.band_subgroups(
+    df = subset(df_gbsg, er > 0),
+    xlabel="Months", ylabel="Survival difference",
+    yseq_length=5, cex_Yaxis=0.7, risk_cex=0.7,
+    by.risk=6, risk_delta=0.075, risk.pad=0.03,
+    tte.name = tte.name, treat.name = treat.name, event.name = event.name, draws.band = 5000, qtau = 0.025, show_resamples = TRUE
+  )
+  legend("topleft", c("Difference estimate", "95% pointwise CIs"),
+         lwd=c(2,1), col=c("black"), lty=c(1,2), bty="n", cex=0.75)
+  title(main="Estrogen receptor positive (er>0) sub-population")
+  
+  
+```
+
+# Weighted Cox Analysis with time-dependent, and subject-specific [ps weighting] weighting
+
+```{r}
+library(data.table)
+library(gt)
+
+dfcount <- dfcount_rotterdam_wtd
+
+get_rg <- cox_rhogamma(dfcount = dfcount, scheme = "fh", scheme_params = list(rho = 0, gamma = 0), draws = 1000, verbose = FALSE)
+# Note: with case-weights (here propensity-score weighting) recommend asymptotic versions of SEs
+res <- data.table()
+res$analysis <- "FH(0,0)"
+res$z <- get_rg$z.score
+res$hr <- get_rg$hr_ci_asy$hr
+res$lower <- get_rg$hr_ci_star$lower
+res$upper <- get_rg$hr_ci_star$upper
+# res$lower <- get_rg$hr_ci_asy$lower
+# res$upper <- get_rg$hr_ci_asy$upper
+# compare with coxph() 
+cat("Comparison with coxph with weighting, coxph:", dfcount$cox_results$cox_text, "\n")
+cat("Mine:", get_rg$cox_text_star, "\n")
+
+res_update <- res
+
+get_rg <- cox_rhogamma(dfcount = dfcount, scheme = "fh", scheme_params = list(rho = 0, gamma = 1), draws = 1000, verbose = FALSE)
+
+res <- data.table()
+res$analysis <- "FH(0,1)"
+res$hr <- get_rg$hr_ci_asy$hr
+res$lower <- get_rg$hr_ci_star$lower
+res$upper <- get_rg$hr_ci_star$upper
+res$z <- get_rg$z.score
+
+
+res_update <- rbind(res_update, res)
+get_rg <- cox_rhogamma(dfcount = dfcount, scheme = "fh_exp2", draws = 1000, verbose = FALSE)
+res <- data.table()
+res$analysis <- "FH_exp2"
+res$hr <- get_rg$hr_ci_asy$hr
+res$lower <- get_rg$hr_ci_star$lower
+res$upper <- get_rg$hr_ci_star$upper
+res$z <- get_rg$z.score
+
+res_update <- rbind(res_update, res)
+
+get_rg <- cox_rhogamma(dfcount = dfcount, scheme = "MB", scheme_params = list(mb_tstar = 12), draws = 1000, verbose = FALSE)
+res <- data.table()
+res$analysis <- "MB(12)"
+
+
+res$hr <- get_rg$hr_ci_asy$hr
+res$lower <- get_rg$hr_ci_star$lower
+res$upper <- get_rg$hr_ci_star$upper
+res$z <- get_rg$z.score
+res_update <- rbind(res_update, res)
+
+
+get_rg <- cox_rhogamma(dfcount = dfcount, scheme = "custom_time", scheme_params = list(t.tau = 6, w0.tau = 0, w1.tau = 1), draws = 1000, verbose = FALSE)
+res <- data.table()
+res$analysis <- "zero_one(6)"
+res$hr <- get_rg$hr_ci_asy$hr
+res$lower <- get_rg$hr_ci_star$lower
+res$upper <- get_rg$hr_ci_star$upper
+res$z <- get_rg$z.score
+res_update <- rbind(res_update, res)
+
+
+res_update %>% gt()  %>% fmt_number(decimals = 3) 
+
+```
+
+
+# Some checks on results
+
+
+
+## Check weighted K-M SE's with survfit
+```{r}
+dfcount_rotterdam_wtd <- get_dfcounting(df=df_rotterdam, tte.name=tte.name, event.name=event.name, treat.name=treat.name, arms=arms, by.risk=24, 
+                                  weight.name="sw.weights", check.seKM = TRUE, draws = 0)
+```
+
+## Check SE's calculated via resampling (draws = 5000) 
+
+Note that draws = 5000 does not take much time, but can be reduced to around 500 for sufficient accuracy.
+
+```{r}
+dfcount_rotterdam_wtd <- get_dfcounting(df=df_rotterdam, tte.name=tte.name, event.name=event.name, treat.name=treat.name, arms=arms, by.risk=24, 
+                                  weight.name="sw.weights", check.seKM = TRUE, draws = 5000)
+```
+
+## Compare with the adjustedCurves package
+```{r}
+# Compare with adjustedCurves
+library(adjustedCurves)
+library(pammtools)
+
+df_rotterdam$hormon2 <- with(df_rotterdam, factor(hormon, labels=c("No","Yes")))
+
+ps_model <- glm(hormon2 ~ age+meno+size+grade+nodes+pgr+chemo+er, data = df_rotterdam, family="binomial")
+
+iptw <- adjustedsurv(data=df_rotterdam, variable="hormon2", ev_time="time_months", event = "status", method = "iptw_km", treatment_model = ps_model, conf_int = TRUE)
+
+```
+
+## Compare KM plots with adjustedCurves package
+
+```{r, fig.width = 8, fig.height = 6}
+plot_weighted_km(dfcount=dfcount_rotterdam_wtd, conf.int = TRUE)
+ title(main="Rotterdam weighted K-M curves")
+```
+
+```{r, fig.width = 8, fig.height = 6}
+ plot(iptw, conf_int = TRUE, legend.title = "Hormonal therapy")
+```
+
+
+## Compare SE's with adjustedCurves package
+```{r, fig.width = 12, fig.height = 6}
+# Check SEs
+par(mfrow=c(1,2))
+
+df_mine <- dfcount_rotterdam_wtd
+
+df_check <- subset(iptw$adj, group == "No")
+yymax <- max(c(sqrt(df_mine$sig2_surv0[df_mine$idv0.check]), df_check$se))
+toget <- df_mine$idv0.check
+tt <- df_mine$at_points[toget]
+yy <- sqrt(df_mine$sig2_surv0)[toget]
+plot(tt,yy, type="s", lty=1, col="lightgrey", lwd=4, ylim=c(0,yymax), xlab="time", ylab="SEs")
+with(df_check, lines(time, se, type="s", lty=2, lwd=1, col="red"))
+title(main="Control SEs")
+
+
+df_check <- subset(iptw$adj, group == "Yes")
+yymax <- max(c(sqrt(df_mine$sig2_surv1[df_mine$idv1.check]), df_check$se))
+toget <- df_mine$idv1.check
+tt <- df_mine$at_points[toget]
+yy <- sqrt(df_mine$sig2_surv1)[toget]
+plot(tt,yy, type="s", lty=1, col="lightgrey", lwd=4, ylim=c(0,yymax), xlab="time", ylab="SEs")
+with(df_check, lines(time, se, type="s", lty=2, lwd=1, col="red"))
+title(main = "Treat SEs")
+
+```
+
+## Check log-rank statistics
+
+```{r}
+# dfcount_gbsg contains logrank (chisq) stats from specified scheme (default is standard logrank rho=0 and gamma=0) from 3 sources:
+# (1) wlr_estimates function 
+# (2) survdiff which only provides rho options so gamma !=0 is not available
+# (3) z_score_calculations function (from a Cox score-test perspective)
+check_results(dfcount_gbsg)
+# Check wlr_dhat_estimates which calculates from any scheme based on counting dataset 
+# In addition, calculates dhat's at tzero as well as correlation with log-rank
+temp <- wlr_dhat_estimates(dfcounting = dfcount_gbsg, scheme_params = list(rho = 0, gamma = 0), scheme = "fh", tzero = 12)
+temp$z.score^2
+
+```
+
+
+2. Stratified by grade, just for illustration
+```{r}
+res <- df_counting(df=df_gbsg, tte.name=tte.name, event.name=event.name, treat.name=treat.name, arms=arms, strata.name="grade")
+```
+stratified
+```{r}
+with(res,lr_stratified^2/sig2_lr_stratified)
+# survdiff stratified
+res$logrank_results$chisq
+ # Cox score stratified
+with(res,z.score_stratified^2)
+```
+non-stratified (should be same as above results without stratification)
+```{r}
+with(res,lr^2/sig2_lr)
+with(res,z.score^2)
+```
+
+
+Add duplicate subject (pid==51) for testing how plots mark ties
+```{r}
+df_add <- subset(df_gbsg, pid == 51)
+df_add$status <- 1.0
+df_mod <- rbind(df_gbsg, df_add)
+dfcount_mod <- get_dfcounting(df=df_mod, tte.name=tte.name, event.name=event.name, treat.name=treat.name, arms=arms)
+check_results(dfcount_mod)
+```
+
+For modified data
+```{r, fig.width = 10, fig.height=6}
+par(mfrow=c(1,2))
+# Add some room above 1 (ymax = 1.05)
+# Align median results with HR estimates (xmed.fraction)
+plot_weighted_km(dfcount_mod, ymax = 1.05, xmed.fraction = 0.65)
+plot_km(df=df_mod, tte.name=tte.name, event.name=event.name, treat.name=treat.name)
+```
+

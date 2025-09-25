@@ -1,0 +1,612 @@
+---
+title: "Weighted Cox Example 1"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, messages = FALSE)
+rm(list=ls())
+library(survival)
+library(weightedSurv)
+library(tinytex)
+
+library(dplyr)
+library(gt)
+library(ggplot2)
+library(tidyr)
+
+```
+
+
+# Load simulation results
+```{r, include=TRUE}
+# Note: revise to relevant location
+load("../vignettes/results/simulations1_1k.RData")
+```
+
+```{r}
+
+# Get all column names in results_sims that contain 'z'
+z_cols <- grep('z', colnames(res_out$results_sims), value = TRUE)
+z_cols
+
+
+library(ggplot2)
+library(tidyr)
+
+# Select Scenario and all z columns
+df <- res_out$results_sims[, c('Scenario', z_cols)]
+
+# Remove columns with 'debiased' from z_cols
+z_cols_nondebiased <- z_cols[!grepl('debiased', z_cols)]
+# Select Scenario and filtered z columns
+df2 <- res_out$results_sims[, c('Scenario', z_cols_nondebiased)]
+
+# Reshape to long format
+#long_df <- pivot_longer(df, cols = -Scenario, names_to = 'z_stat', values_to = 'z_value')
+
+# Reshape to long format
+long_df2 <- tidyr::pivot_longer(df2, cols = -Scenario, names_to = 'z_stat', values_to = 'z_value')
+
+
+# Plot: boxplot of z_value by Scenario, faceted by z_stat
+p <- ggplot(long_df2, aes(x = factor(Scenario), y = z_value)) +
+  geom_boxplot(outlier.size = 0.2) +
+  facet_wrap(~z_stat, scales = 'free_y') +
+  labs(x = 'Scenario', y = 'Z value', title = 'Distribution of Z statistics by Scenario') +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1, size = 6))
+
+print(p)
+
+# Reorder z_cols_nondebiased so fh00z_mine is next to logrankz
+z_order <- z_cols_nondebiased
+z_order <- z_order[z_order != 'fh00z_mine'] # remove fh00z_mine
+z_order <- append(z_order, 'fh00z_mine', after = which(z_order == 'logrankz'))
+
+# Reshape to long format and set factor levels
+long_df2$z_stat <- factor(long_df2$z_stat, levels = z_order)
+
+# Plot with new facet order
+p3 <- ggplot(long_df2, aes(x = factor(Scenario), y = z_value)) +
+  geom_boxplot(outlier.size = 0.2) +
+  facet_wrap(~z_stat, scales = 'free_y') +
+  labs(x = 'Scenario', y = 'Z value', title = 'Distribution of Z statistics by Scenario (fh00z_mine next to logrankz)') +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1, size = 6))
+
+print(p3)
+
+
+
+
+# Custom order: group main and _mine variants together
+z_main <- c('logrankz', 'fh00z_mine', 'fh05z', 'fh05z_mine','fh01z', 'fh01z_mine',
+            'mb6z', 'mb6z_mine', 'mb12z', 'mb12z_mine', 'fhe1z', 'fhe2z')
+
+# Only keep those present in z_cols_nondebiased
+z_order2 <- z_main[z_main %in% z_cols_nondebiased]
+
+# Add any remaining columns not in z_main
+z_order2 <- c(z_order2, setdiff(z_cols_nondebiased, z_order2))
+
+# Set factor levels for facet order
+long_df2$z_stat <- factor(long_df2$z_stat, levels = z_order2)
+
+
+
+
+# Plot with new facet order
+p4 <- ggplot(long_df2, aes(x = factor(Scenario), y = z_value)) +
+  geom_boxplot(outlier.size = 0.2) +
+  facet_wrap(~z_stat, scales = 'free_y') +
+  labs(x = 'Scenario', y = 'Z value', title = 'Distribution of Z statistics by Scenario (paired order)') +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1, size = 6))
+
+print(p4)
+
+
+# Create scenario_name mapping
+scenario_labels <- c('PH', '3-month', '6-month', 'Crossing', 'Weak', 'Strong')
+long_df2$scenario_name <- factor(long_df2$Scenario,
+                                 levels = 1:6,
+                                 labels = scenario_labels)
+
+# Plot with scenario_name on x-axis
+p5 <- ggplot(long_df2, aes(x = scenario_name, y = z_value)) +
+  geom_boxplot(outlier.size = 0.2) +
+  facet_wrap(~z_stat, scales = 'free_y') +
+  labs(x = 'Scenario', y = 'Z value', title = 'Distribution of Z statistics by Scenario (named)') +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 8))
+
+print(p5)
+
+
+# Power graph 
+
+library(dplyr)
+library(ggplot2)
+library(tidyr)
+
+# Calculate proportion of z_value > qnorm(0.975) for each scenario_name and z_stat
+grouped_summary <- long_df2 %>%
+  group_by(scenario_name, z_stat) %>%
+  summarise(prop_signif = mean(z_value > qnorm(0.975)), .groups = 'drop')
+
+# Bar plot of proportion significant
+p6 <- ggplot(grouped_summary, aes(x = scenario_name, y = prop_signif, fill = scenario_name)) +
+  geom_col() +
+  facet_wrap(~z_stat, ncol = 4) +
+  labs(x = 'Scenario', y = 'Proportion Significant (z > 1.96)',
+       title = 'Proportion of Significant Z statistics by Scenario') +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 8),
+        legend.position = 'none')
+
+print(p6)
+
+
+
+
+# Bar plot with y-axis expanded from 0 to 1
+p7 <- ggplot(grouped_summary, aes(x = scenario_name, y = prop_signif, fill = scenario_name)) +
+  geom_col() +
+  facet_wrap(~z_stat, ncol = 4) +
+  labs(x = 'Scenario', y = 'Proportion Significant (z > 1.96)',
+       title = 'Proportion of Significant Z statistics by Scenario') +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 8),
+        legend.position = 'none') +
+  ylim(0, 1)
+
+print(p7)
+
+
+# Calculate prop_signif for annotation
+ann_df <- long_df2 %>%
+  group_by(scenario_name, z_stat) %>%
+  summarise(prop_signif = mean(z_value > qnorm(0.975)), .groups = 'drop')
+
+# Merge prop_signif into long_df2 for coloring
+long_df2 <- left_join(long_df2, ann_df, by = c('scenario_name', 'z_stat'))
+
+# Add horizontal line at z = qnorm(0.975) in each facet
+p5_new <- ggplot(long_df2, aes(x = scenario_name, y = z_value, fill = prop_signif)) +
+  geom_boxplot(outlier.size = 0.2) +
+  facet_wrap(~z_stat, scales = 'free_y') +
+  labs(x = 'Scenario', y = 'Z value', title = 'Distribution of Z statistics by Scenario (named, legend, 0.025 line)', fill = 'Prop. Significant') +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 8)) +
+  scale_fill_gradient(low = 'lightblue', high = 'red') +
+  geom_hline(yintercept = qnorm(0.975), linetype = 'dashed', color = 'black', size = 0.5)
+
+print(p5_new)
+
+
+
+library(dplyr)
+
+
+# Calculate prop_signif for annotation
+ann_df <- long_df2 %>%
+  group_by(scenario_name, z_stat) %>%
+  summarise(prop_signif = mean(z_value > qnorm(0.975)), .groups = 'drop')
+# Merge prop_signif into long_df2 for coloring
+long_df2 <- left_join(long_df2, ann_df, by = c('scenario_name', 'z_stat'))
+
+# Find minimum z_value for each facet to place annotation near the bottom
+min_z <- long_df2 %>% group_by(z_stat) %>% summarise(min_z = min(z_value))
+ann_df_ws <- ann_df %>% filter(scenario_name %in% c('Weak', 'Strong'))
+ann_df_ws <- left_join(ann_df_ws, min_z, by = 'z_stat')
+
+# Create annotation labels with leading and trailing zeros removed
+ann_df_ws$label <- sub("^0+", "", sub("\\.?0+$", "", sprintf("%.3f", ann_df_ws$prop_signif)))
+
+# Set label color based on prop_signif > 0.026
+ann_df_ws$label_color <- ifelse(ann_df_ws$prop_signif > 0.026, "red", "black")
+
+# Merge prop_signif into long_df2 for correct fill
+long_df2_fill <- left_join(long_df2, ann_df, by = c('scenario_name', 'z_stat'))
+
+# Boxplot with fill mapped to prop_signif
+p_fill <- ggplot(long_df2_fill, aes(x = scenario_name, y = z_value, fill = prop_signif)) +
+  geom_boxplot(outlier.size = 0.2) +
+  facet_wrap(~z_stat, scales = 'free_y') +
+  labs(x = 'Scenario', y = 'Z value', title = 'Distribution of Z statistics by Scenario (box fill by prop_signif)', fill = 'Prop. Significant') +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 8)) +
+  scale_fill_gradient(low = 'yellow', high = 'lightblue') +
+  geom_hline(yintercept = qnorm(0.975), linetype = 'dashed', color = 'black', size = 0.5) +
+  geom_text(data = ann_df_ws, aes(x = scenario_name, y = min_z, label = label, color = label_color),
+            size = 3.5, fontface = 'bold', inherit.aes = FALSE, vjust = -0.5) +
+  scale_color_identity()
+
+print(p_fill)
+```
+
+
+
+# Main plot
+
+```{r}
+
+# Get all column names in results_sims that contain 'z'
+z_cols <- grep('z', colnames(res_out$results_sims), value = TRUE)
+# Select Scenario and all z columns
+df <- res_out$results_sims[, c('Scenario', z_cols)]
+# Remove columns with 'debiased' from z_cols
+z_cols_nondebiased <- z_cols[!grepl('debiased', z_cols)]
+# Select Scenario and filtered z columns
+
+z_main <- c('fh00z_mine', 'fh05z_mine', 'fh01z_mine',
+            'mb6z_mine', 'mb12z_mine', 'fhe1z', 'fhe2z', 't601z')
+
+
+df2 <- res_out$results_sims[, c('Scenario', z_main)]
+
+# Reshape to long format
+long_df2 <- tidyr::pivot_longer(df2, cols = -Scenario, names_to = 'z_stat', values_to = 'z_value')
+
+# Create scenario_name mapping
+scenario_labels <- c('PH', '3-month', '6-month', 'Crossing', 'Weak', 'Strong')
+long_df2$scenario_name <- factor(long_df2$Scenario,
+                                 levels = 1:6,
+                                 labels = scenario_labels)
+
+# Calculate prop_signif for annotation
+ann_df <- long_df2 %>%
+  group_by(scenario_name, z_stat) %>%
+  summarise(prop_signif = mean(z_value > qnorm(0.975)), .groups = 'drop')
+
+# Find minimum z_value for each facet to place annotation near the bottom
+min_z <- long_df2 %>% group_by(z_stat) %>% summarise(min_z = min(z_value))
+ann_df_ws <- ann_df %>% filter(scenario_name %in% c('Weak', 'Strong'))
+ann_df_ws <- left_join(ann_df_ws, min_z, by = 'z_stat')
+# Create annotation labels with leading and trailing zeros removed
+ann_df_ws$label <- sub("^0+", "", sub("\\.?0+$", "", sprintf("%.3f", ann_df_ws$prop_signif)))
+
+max_z <- long_df2 %>% group_by(z_stat) %>% summarise(max_z = max(z_value))
+ann_df_Nonws <- ann_df %>% filter(!(scenario_name %in% c('Weak', 'Strong')))
+ann_df_Nonws <- left_join(ann_df_Nonws, max_z, by = 'z_stat')
+# Create annotation labels with leading and trailing zeros removed
+ann_df_Nonws$label <- sub("^0+", "", sub("\\.?0+$", "", sprintf("%.3f", ann_df_Nonws$prop_signif)))
+
+n_sim <- res_out$number_sims
+pnull_threshold <- round(0.025 + 1.96*sqrt(0.025*0.975/n_sim),4)
+
+# Set label color based on prop_signif > 0.0264
+ann_df_ws$label_color <- ifelse(ann_df_ws$prop_signif > 0.0264, "red", "black")
+
+ann_df_Nonws$label_color <- ifelse(ann_df_Nonws$prop_signif > 0.85, "purple", "grey")
+
+# Merge prop_signif into long_df2 for correct fill
+long_df2_fill <- left_join(long_df2, ann_df, by = c('scenario_name', 'z_stat'))
+
+# Boxplot with fill mapped to prop_signif
+p_fill <- ggplot(long_df2_fill, aes(x = scenario_name, y = z_value, fill = prop_signif)) +
+  geom_boxplot(outlier.size = 0.2) +
+  facet_wrap(~z_stat, scales = 'free_y') +
+  labs(x = 'Scenario', y = 'Z value', title = 'Distribution of Z statistics by Scenario (box fill by prop_signif)', fill = 'Prop. Significant') +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 8)) +
+  scale_fill_gradient(low = 'yellow', high = 'lightblue') +
+  geom_hline(yintercept = qnorm(0.975), linetype = 'dashed', color = 'black', size = 0.5) +
+  geom_text(data = ann_df_ws, aes(x = scenario_name, y = min_z, label = label, color = label_color),
+            size = 3.5, fontface = 'bold', inherit.aes = FALSE, vjust = -0.5) +
+  scale_color_identity() +
+  geom_text(data = ann_df_Nonws, aes(x = scenario_name, y = max_z, label = label, color = label_color),
+            size = 3.5, fontface = 'bold', inherit.aes = FALSE, vjust = 0.5) 
+
+#print(p_fill)
+```
+
+
+
+```{r, fig.width = 12, fig.height = 8}
+print(p_fill)
+```
+
+
+
+# WLR and Wald tests (upper-bound < 1)
+
+```{r}
+
+results <- res_out$results_sims
+
+n_sim <- res_out$number_sims
+time_inhours <- res_out$thours
+
+results$Scenario <- factor(results$Scenario, levels = 1:6,
+     labels = c("PH", "3m delay", "6m delay", "Crossing", "Weak null", "Strong null"))
+results |> group_by(Scenario) |> 
+  summarise("Cox" = mean(fh00_wald < 1.0),
+            "Cox*" = mean(fh00_waldstar < 1.0),
+            "fh00z" = mean(fh00z_mine > qnorm(0.975)),  
+            "FH05w" = mean(fh05_wald < 1.0),
+            "FH05w*" = mean(fh05_waldstar < 1.0),
+            "FH05z" = mean(fh05z_mine > qnorm(0.975)),
+            "FH01w" = mean(fh01_wald < 1.0),
+            "FH01w*" = mean(fh01_waldstar < 1.0),
+            "FH01z" = mean(fh01z_mine > qnorm(0.975)),
+            "MB(12)w" = mean(mb12_wald < 1.0),
+            "MB(12)w*" = mean(mb12_waldstar < 1.0),
+            "MB(12)z" = mean(mb12z_mine > qnorm(0.975)),
+            "FHe1w" = mean(fhe1_wald < 1.0),
+            "FHe1w*" = mean(fhe1_waldstar < 1.0),
+            "FHe1z" = mean(fhe1z > qnorm(0.975)),
+            "FHe2w" = mean(fhe2_wald < 1.0),
+            "FHe2w*" = mean(fhe2_waldstar < 1.0),
+            "FHe2z" = mean(fhe2z > qnorm(0.975))
+            ) |>
+  gt() |> fmt_number(columns = 2:18, decimals = 3)  
+
+```
+
+
+# WLR and Wald tests (upper-bound < 1)
+
+```{r}
+
+results <- res_out$results_sims
+
+n_sim <- res_out$number_sims
+time_inhours <- res_out$thours
+
+results$Scenario <- factor(results$Scenario, levels = 1:6,
+     labels = c("PH", "3m delay", "6m delay", "Crossing", "Weak null", "Strong null"))
+results |> group_by(Scenario) |> 
+  summarise("Cox" = mean(fh00_wald < 1.0),
+            "log-rank" = mean(fh00z_mine > qnorm(0.975)),  
+            "FH05w" = mean(fh05_wald < 1.0),
+            "FH05z" = mean(fh05z_mine > qnorm(0.975)),
+            "FH01w" = mean(fh01_wald < 1.0),
+            "FH01z" = mean(fh01z_mine > qnorm(0.975)),
+            "MB(12)w" = mean(mb12_wald < 1.0),
+            "MB(12)z" = mean(mb12z_mine > qnorm(0.975)),
+            "FHe2w" = mean(fhe2_wald < 1.0),
+            "FHe2z" = mean(fhe2z > qnorm(0.975)),
+            "t601w" = mean(t601_wald < 1.0),
+            "t601z" = mean(t601z > qnorm(0.975))
+            ) |>
+  gt() |> fmt_number(columns = 2:13, decimals = 3)  
+```
+
+
+       
+# Hazard-ratio estimates
+
+```{r}
+
+results <- res_out$results_sims
+results$Scenario <- factor(results$Scenario, levels = 1:6,
+     labels = c("PH", "3m delay", "6m delay", "Crossing", "Weak null", "Strong null"))
+results |> group_by(Scenario) |> 
+  
+    summarise("Cox" = mean(exp(fh00_bhat), na.rm=TRUE),
+              "Coxdb" = mean(exp(fh00_bhatdebiased), na.rm=TRUE),
+              "se00" = sqrt(var(fh00_bhat, na.rm=TRUE)),
+              "se00h" = mean(fh00_sigbhat, na.rm=TRUE),
+              "se00h*" = mean(fh00_sigbhatstar, na.rm = TRUE),
+              "C00_75" = mean(fh00_cover, na.rm = TRUE),
+              "FH01" = mean(exp(fh01_bhat), na.rm=TRUE),
+              "FH01db" = mean(exp(fh01_bhatdebiased), na.rm=TRUE),
+              "se01" = sqrt(var(fh01_bhat, na.rm=TRUE)),
+              "se01h" = mean(fh01_sigbhat, na.rm=TRUE),
+              "se01h*" = mean(fh01_sigbhatstar, na.rm = TRUE),
+              "C01_75" = mean(fh01_cover, na.rm = TRUE),
+              "t601" = mean(exp(t601_bhat), na.rm=TRUE),
+              "t601db" = mean(exp(t601_bhatdebiased), na.rm=TRUE),
+              "set01" = sqrt(var(t601_bhat, na.rm=TRUE)),
+              "set01h" = mean(t601_sigbhat, na.rm=TRUE),
+              "set01h*" = mean(t601_sigbhatstar, na.rm = TRUE),
+              "Ct01_75" = mean(t601_cover, na.rm = TRUE),
+              
+              
+            ) |>
+  gt() |> fmt_number(columns = 2:19, decimals = 3)  
+
+```
+
+```{r}
+results <- res_out$results_sims
+results$Scenario <- factor(results$Scenario, levels = 1:6,
+     labels = c("PH", "3m delay", "6m delay", "Crossing", "Weak null", "Strong null"))
+
+table_gt <- results %>%
+  group_by(Scenario) %>%
+  summarise(
+    Cox = mean(exp(fh00_bhat), na.rm=TRUE),
+    Coxdb = mean(exp(fh00_bhatdebiased), na.rm=TRUE),
+    se00 = sqrt(var(fh00_bhat, na.rm=TRUE)),
+    se00h = mean(fh00_sigbhat, na.rm=TRUE),
+    se00h_star = mean(fh00_sigbhatstar, na.rm = TRUE),
+    t601 = mean(exp(t601_bhat), na.rm=TRUE),
+    t601db = mean(exp(t601_bhatdebiased), na.rm=TRUE),
+    set01 = sqrt(var(t601_bhat, na.rm=TRUE)),
+    set01h = mean(t601_sigbhat, na.rm=TRUE),
+    set01h_star = mean(t601_sigbhatstar, na.rm = TRUE)
+  ) %>%
+  rename(
+    HR = Cox, 
+    HR_db = Coxdb,
+    SE = se00,
+    SE_est = se00h,
+    SE_db = se00h_star,
+    HR2 = t601, 
+    HR_db2 = t601db,
+    SE2 = set01,
+    SE_est2 = set01h,
+    SE_db2 = set01h_star,
+  ) %>%
+  gt() %>%
+  fmt_number(columns = 2:11, decimals = 3) %>%
+  cols_label(
+    HR = "HR",
+    HR_db = "db(HR)",
+    HR2 = "HR ",
+    HR_db2 = "db(HR) ",
+    SE ="SE",
+    SE_est = "est(SE)",
+    SE_db ="est*(SE)",
+    SE2 ="SE ",
+    SE_est2 = "est(SE) ",
+    SE_db2 ="est*(SE) "
+      ) %>%
+  tab_spanner(
+    label = "Standard Cox Estimates",
+    columns = c("HR", "HR_db", "SE","SE_est", "SE_db")
+  ) %>%
+  tab_spanner(
+    label = "zero/one(6) Estimators",
+    columns = c("HR2", "HR_db2", "SE2","SE_est2", "SE_db2")
+    ) 
+
+
+table_gt2 <- table_gt %>%
+  tab_style(
+    style = cell_fill(color = "#D3D3D3"),  # light grey
+    locations = cells_body(
+      columns = "HR2",
+      rows = Scenario == "6m delay"
+    )
+  )
+
+table_gt3 <- table_gt2 %>%
+  tab_style(
+    style = cell_fill(color = "yellow"),  # light grey
+    locations = cells_body(
+      columns = "HR",
+      rows = Scenario == "6m delay"
+    )
+  )
+
+table_gt3
+
+
+
+```
+       
+
+# Weighted log-rank statistics
+
+
+```{r}
+
+results <- res_out$results_sims
+results$Scenario <- factor(results$Scenario, levels = 1:6,
+     labels = c("PH", "3m delay", "6m delay", "Crossing", "Weak null", "Strong null"))
+results |> group_by(Scenario) |> 
+  summarise("logrank" = mean(logrankz > qnorm(0.975)),
+            "fh00*" = mean(fh00z_mine > qnorm(0.975)),  
+            "FH05" = mean(fh05z > qnorm(0.975)),
+            "FH05*" = mean(fh05z_mine > qnorm(0.975)),
+            "FH01" = mean(fh01z > qnorm(0.975)),
+            "FH01*" = mean(fh01z_mine > qnorm(0.975)),
+            "FH01db" = mean(fh01z_debiased > qnorm(0.975)),
+            "MB(6)" = mean(mb6z > qnorm(0.975)),
+            "MB(6)*" = mean(mb6z_mine > qnorm(0.975)),
+            "MB(12)" = mean(mb12z > qnorm(0.975)),
+            "MB(12)*" = mean(mb12z_mine > qnorm(0.975)),
+            "MB(16)" = mean(mb16z > qnorm(0.975)),
+            "MB(16)*" = mean(mb16z_mine > qnorm(0.975)),
+            "FHexp1" = mean(fhe1z > qnorm(0.975)),
+            "FHexp2" = mean(fhe2z > qnorm(0.975)),
+            "maxcombbo" = mean(maxcombop <= 0.025)
+            ) |>
+  gt() |> fmt_number(columns = 2:16, decimals = 3)  
+
+```
+
+
+
+# Checking alignment with simtrial
+
+```{r}
+# We now go back to the entire simulation results to compare 
+# log-rank z-statistics with those of simtrial
+# z-statistics with extension "_mine" vs simtrial
+
+# Get all column names in results_sims that contain 'z'
+z_cols <- grep('z', colnames(res_out$results_sims), value = TRUE)
+z_cols
+# Select Scenario and all z columns
+df <- res_out$results_sims[, c('Scenario', z_cols)]
+# Remove columns with 'debiased' from z_cols
+z_cols_nondebiased <- z_cols[!grepl('debiased', z_cols)]
+# Select Scenario and filtered z columns
+df2 <- res_out$results_sims[, c('Scenario', z_cols_nondebiased)]
+# Reshape to long format
+long_df2 <- tidyr::pivot_longer(df2, cols = -Scenario, names_to = 'z_stat', values_to = 'z_value')
+
+# Custom order: group main and _mine variants together
+# For example logrankz denotes simtrial log-rank and fh00z_mine is based on weightedSurv
+
+z_main <- c('logrankz', 'fh00z_mine', 'fh05z', 'fh05z_mine','fh01z', 'fh01z_mine',
+            'mb6z', 'mb6z_mine', 'mb12z', 'mb12z_mine', 'fhe1z', 'fhe2z', 't601z')
+
+# Only keep those present in z_cols_nondebiased
+z_order2 <- z_main[z_main %in% z_cols_nondebiased]
+# Add any remaining columns not in z_main
+z_order2 <- c(z_order2, setdiff(z_cols_nondebiased, z_order2))
+# Set factor levels for facet order
+long_df2$z_stat <- factor(long_df2$z_stat, levels = z_order2)
+
+# Create scenario_name mapping
+scenario_labels <- c('PH', '3-month', '6-month', 'Crossing', 'Weak', 'Strong')
+long_df2$scenario_name <- factor(long_df2$Scenario,
+                                 levels = 1:6,
+                                 labels = scenario_labels)
+
+# Calculate prop_signif for annotation
+ann_df <- long_df2 %>%
+  group_by(scenario_name, z_stat) %>%
+  summarise(prop_signif = mean(z_value > qnorm(0.975)), .groups = 'drop')
+
+# Find minimum z_value for each facet to place annotation near the bottom
+min_z <- long_df2 %>% group_by(z_stat) %>% summarise(min_z = min(z_value))
+ann_df_ws <- ann_df %>% filter(scenario_name %in% c('Weak', 'Strong'))
+ann_df_ws <- left_join(ann_df_ws, min_z, by = 'z_stat')
+
+# Create annotation labels with leading and trailing zeros removed
+ann_df_ws$label <- sub("^0+", "", sub("\\.?0+$", "", sprintf("%.3f", ann_df_ws$prop_signif)))
+
+n_sim <- res_out$number_sims
+pnull_threshold <- round(0.025 + 1.96*sqrt(0.025*0.975/n_sim),4)
+
+# Set label color based on prop_signif > 0.0264
+ann_df_ws$label_color <- ifelse(ann_df_ws$prop_signif > 0.0264, "red", "black")
+
+# Merge prop_signif into long_df2 for correct fill
+long_df2_fill <- left_join(long_df2, ann_df, by = c('scenario_name', 'z_stat'))
+
+# Boxplot with fill mapped to prop_signif
+p_fill <- ggplot(long_df2_fill, aes(x = scenario_name, y = z_value, fill = prop_signif)) +
+  geom_boxplot(outlier.size = 0.2) +
+  facet_wrap(~z_stat, scales = 'free_y') +
+  labs(x = 'Scenario', y = 'Z value', title = 'Distribution of Z statistics by Scenario (box fill by prop_signif)', fill = 'Prop. Significant') +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 8)) +
+  scale_fill_gradient(low = 'yellow', high = 'lightblue') +
+  geom_hline(yintercept = qnorm(0.975), linetype = 'dashed', color = 'black', size = 0.5) +
+  geom_text(data = ann_df_ws, aes(x = scenario_name, y = min_z, label = label, color = label_color),
+            size = 3.5, fontface = 'bold', inherit.aes = FALSE, vjust = -0.5) +
+  scale_color_identity()
+
+```
+
+
+
+```{r, fig.width = 12, fig.height = 8}
+print(p_fill)
+```
+
+
+## Simulations
+
+Simulations are based on `r prettyNum(n_sim, big.mark=",")` trials simulated for each result. Type-1 error upper bounds are `r round(0.025 + 1.96*sqrt(0.025*0.975/n_sim),4)` and 
+`r round(0.05 + 1.96*sqrt(0.05*0.95/n_sim),4)` for $2.5\%$ (1-sided) and $5\%$ (2-sided) alpha-levels.   The computational time was `r round(time_inhours,2)` hours.
+
+

@@ -258,10 +258,10 @@ plot_weight_schemes <- function(
                                   if (transform_fh) ifelse(scheme %in% c('fh'), exp(weight), weight) else weight
   )
   g <- ggplot(df_weights, aes(x = time, y = weight_trans, linetype = label)) +
-    geom_line(aes(color = label, size = label)) +
+    geom_line(aes(color = label, linewidth = label)) +
     facet_wrap(~ facet_group, scales = 'free_y') +
     scale_color_manual(values = custom_colors) +
-    scale_size_manual(values = custom_sizes) +
+    scale_linewidth_manual(values = custom_sizes) +
     labs(x = 'Time (months)', y = 'Weight', linetype = 'Label',
          title = 'MB vs FH and exponential FH variant weights') +
     theme_minimal()

@@ -11,3 +11,5 @@ RoxygenNote: 7.3.2
 Imports: 
     ggplot2,
     survival
+URL: https://github.com/larry-leon/weightedSurv
+BugReports: https://github.com/larry-leon/weightedSurv/issues
