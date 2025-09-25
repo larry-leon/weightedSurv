@@ -23,7 +23,7 @@ library(weightedSurv)
 
 ```{r, eval=FALSE}
 # Brute force to identify Strong Null simulation where FH(0,1) rejects but fh_exp2 does not 
-load("results/simulations1_10k.RData")
+load("../vignettes/results/simulations1_25k.RData")
 
 # Extract strong-null scenario
 library(simtrial)
@@ -62,7 +62,7 @@ if(z_rg > 1.96 & z_fh < 1.96) cat("Check this out=",c(ss),"\n")
 
 # Simulate example
 ```{r}
-load("results/simulations1_10k.RData")
+load("../vignettes/results/simulations1_25k.RData")
 
 # Extract strong-null scenario
 library(simtrial)
@@ -104,6 +104,8 @@ dfcount <- get_dfcounting(df=dfa, tte.name = "tte", event.name = "event", treat.
 plot_weighted_km(dfcount=dfcount, conf.int=TRUE, show.logrank = TRUE, ymax = 1.05)
 title(main="Simulated data")
 ```
+
+
 # KM differences
 
 ```{r, fig.width = 8, fig.height=6}

@@ -25,7 +25,7 @@ library(tidyr)
 # Note: revise to relevant location
 # The simulations are run in batch mode and saved in results directory that is NOT uploaded to GitHub
 # The code to run the simulations is "run_wCox_simulations1.r" in the vignettes directory
-load("../vignettes/results/simulations1_10k.RData")
+load("../vignettes/results/simulations1_25k.RData")
 n_sim <- res_out$number_sims 
 time_inhours <- res_out$thours
 ```
