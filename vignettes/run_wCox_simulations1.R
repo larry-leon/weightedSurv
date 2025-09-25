@@ -103,5 +103,5 @@ n_sim <- 10000
 # do_approach options "callr", "multisession", or "multicore"
 
 these_sims <- get_sims(n_sim = n_sim, dof_approach = "callr", seedstart = 8316951, num_workers = 8, mart_draws = 500, save_results = TRUE,
-                       file_togo = "vignettes/results/simulations1.RData")
+                       file_togo = "vignettes/results/simulations1_10k.RData")
 

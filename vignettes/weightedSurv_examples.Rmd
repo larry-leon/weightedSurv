@@ -1,10 +1,50 @@
 ---
-title: "Weighted KM Plots Examples"
-output: html_document
+title: "Weighted Survival Analysis Examples"
+output: 
+  html_document:
+         code_folding: hide
+bibliography: references.bib
 ---
+
+# Overview
+
+In this draft vignette of the `weightedSurv` package [@weightedSurv] we illustrate various weighted survival analyses with two breast cancer datasets available in the base R `survival` library [@survival] both evaluating hormon replacement therapy in comparison to chemotherapy.  The 
+`gbsg` trial [@schumacher1994prognostic] was randomized, whereas the `rotterdam` study [@roos1991prognostic] was observational; Wherein for comparisons of the non-randomized therapy, in contrast to un-adjusted comparisons, propensity-score adjustment [@cole2004adjusted] appears to suggest a stronger impact consistent with the randomized trial.
+
 # Survival Analysis and KM Plotting 
 
-Survival Analysis and Kaplan-Meier plotting functions
+Survival analysis functions allowing for time-dependent and subject-specific (eg, propensity-scores) weighting.
+
+Weighted estimation for:  Cox model; Kaplan-Meier treatment survival curves as well as treatment difference along with point-wise and simultaneous confidence bands; and Restricted mean survival time (RMST, @uno2014rmst) comparisons where RMST estimates are evaluated across all potential truncation times (point-wise and simultaneous bands).
+
+Summary: Weighted Survival Analysis Capabilities
+
+* Weighted Kaplan-Meier and Log-Rank Analyses
+  * The code provides functions to compute and plot weighted Kaplan-Meier survival curves for two or more groups, using custom weights.
+Weighted log-rank statistics can be calculated using flexible, time-dependent weighting schemes (e.g., Fleming-Harrington, Schemper, Xu & O'Quigley, Maggir-Burman, and custom schemes).
+Functions such as wlr_dhat_estimates, wlr_cumulative, and KM_estimates (in km_wlr_calculations_helpers.R) allow for the calculation of weighted risk sets, event counts, and survival probabilities.
+
+* Weighted Cox Proportional Hazards Models
+  * The code supports fitting Cox models with custom weights, including rho-gamma weights for weighted log-rank tests.
+Functions like cox_rhogamma and cox_score_rhogamma (in weightedCox.R) implement weighted Cox regression, including score calculations, confidence intervals, and resampling for inference.
+The code allows for root-finding and score-based estimation in the presence of weights.
+
+* Flexible Weighting Schemes
+  * The weighted_helpers.R file provides a framework for defining, validating, and applying a variety of weighting schemes to survival data.
+The get_weights and extract_and_calc_weights functions allow users to specify and compute weights for each subject and time point, supporting both standard and custom schemes.
+Visualization of weight functions over time is supported via plot_weight_schemes.
+
+* Counting Process Data Preparation
+  * The code can transform raw survival data into a counting process format, which is essential for weighted analyses.
+Functions in df_counting.R and df_counting_helpers.R prepare risk sets, event counts, and weighted summaries for each group, supporting both unweighted and weighted analyses.
+
+* Weighted RMST (Restricted Mean Survival Time)
+  * The code includes functions for calculating cumulative RMST and confidence bands using resampling, with support for weights (rmst_calculations.R).
+
+* Plotting and Visualization
+  * Weighted survival curves, confidence intervals, and risk tables can be plotted using functions in kmplotting_helpers.R.
+The plotting functions support the display of weighted KM curves, weighted risk tables, and annotation of statistical results.
+
 
 ## Analysis functions
 
@@ -13,6 +53,8 @@ Prepares a comprehensive dataset for survival analysis using the counting proces
 
 Time-dependent weights for log-rank statistics are implemented via *wt.rg.S* function: Supporting a variety of commonly used and custom weighting schemes for weighted log-rank and related tests. The function is flexible and can be used for Fleming-Harrington, Schemper, Xu & O'Quigley (XO), Maggir-Burman (MB), custom time-based, and exponential variants of Fleming-Harrington weights.
 
+Subject-specific (case-weights) are also included in order to implement propensity-score weighted analyses.
+
 *Key Features:*
 - Calculates weights for use in weighted log-rank and related survival tests.
 - Supports standard Fleming-Harrington weights (`scheme = "fh"`).
@@ -20,24 +62,6 @@ Time-dependent weights for log-rank statistics are implemented via *wt.rg.S* fun
 - Allows for custom time-based weights (`scheme = "custom_time"`).
 - Supports exponential variants of Fleming-Harrington weights (`scheme = "fh_exp1"`, `scheme = "fh_exp2"`).
 
-*Typical Inputs:*
-- `S`: Kaplan-Meier survival curve (vector).
-- `scheme`: Weighting scheme (e.g., `"fh"`, `"schemper"`, `"XO"`, `"MB"`, `"custom_time"`, `"fh_exp1"`, `"fh_exp2"`).
-- `rho`, `gamma`: Weighting parameters (for `"fh"`).
-- `Scensor`: *(Optional)* Censoring distribution (for `"schemper"`).
-- `Ybar`: *(Optional)* Risk set sizes (for `"XO"`).
-- `tpoints`, `t.tau`, `w0.tau`, `w1.tau`: *(Optional)* For custom time-based weights.
-- `mb_tstar`: *(Optional)* For MB weights.
-- `details`: *(Optional)* Logical; whether to return detailed output.
-
-*Typical Outputs:*
-- A vector of weights corresponding to the input time points (or a list with details if `details = TRUE`).
-
-*Main Steps:*
-1. Determines the weighting scheme based on the `scheme` argument.
-2. Computes weights using the chosen formula and input survival/censoring curves.
-3. Handles special cases for Schemper, XO, MB, custom time-based, and exponential FH weights.
-4. Returns the computed weight vector (or details if requested).
 
 ```{r, echo = FALSE}
 library(DiagrammeR)
@@ -100,6 +124,19 @@ Plots the difference (via KM_diff calculations) in Kaplan-Meier survival curves 
 Computes the weighted log-rank test statistic, its variance, the difference in survival between two groups at a specified time point (`tzero`), the variance of this difference, their covariance, and correlation. It supports flexible time-dependent weighting schemes via the `wt.rg.S` function.
 
 
+### cumulative_rmst_bands 
+The cumulative_rmst_bands function calculates and plots cumulative Restricted Mean Survival Time (RMST) estimates and their confidence bands for survival curves, typically comparing two groups (e.g., treatment vs. control).
+
+Key Features
+
+* Computes cumulative RMST over time for each group.
+
+* Uses resampling (bootstrap or similar) to estimate confidence bands for the RMST curves.
+
+* Supports weighted analyses (optional).
+
+* Plots the RMST curves and their confidence intervals along with simultaneous bands.
+
 
 ```{r, message = FALSE}
 rm(list=ls())
@@ -109,6 +146,8 @@ library(survival)
 # library(devtools)
 # github_install("larry-leon/weightedSurv")
 library(weightedSurv)
+
+library(dplyr)
 ```
 ---- Data Preparation ----
 Prepare GBSG data
@@ -145,7 +184,7 @@ by.risk = 12, scheme = "fh", scheme_params = list(rho = 0, gamma =0), lr.digits 
   
 # Show some weight functions
 
-```{r, fig.width = 10, fig.height=6}
+```{r, fig.width = 10, fig.height=6, warning = FALSE, message = FALSE}
 g <- plot_weight_schemes(dfcount_gbsg)
 print(g)
 
@@ -210,10 +249,32 @@ gbsg_validate <- within(rotterdam, {
   SG0 <- ifelse(er <= 0, 0, 1)
 })
 ```
-Node positive only to correspond to GBSG population
+Node positive only to correspond to GBSG population  
 ```{r}
 df_rotterdam <- subset(gbsg_validate, nodes > 0)
 ```
+
+Baseline demographics table
+```{r}
+library(arsenal)
+
+rotterdam2 <- df_rotterdam %>%
+  mutate(
+    meno = factor(meno, levels = c(0, 1), labels = c("Pre", "Post")),
+    grade3 = factor(grade3, levels = c(0, 1), labels = c("Not Grade 3", "Grade 3")),
+    chemo = factor(chemo, levels = c(0, 1), labels = c("No", "Yes")),
+    er_negative = factor(ifelse(er == 0, 1, 0), labels = c("ER negative","ER positive"))
+  )
+
+baseline_table <- tableby(treat ~ age + meno + size + grade3 + nodes + pgr + chemo + er_negative + er, data = rotterdam2)
+
+```
+
+```{r results = 'asis'}
+summary(baseline_table, text = FALSE)
+```
+
+
 Propensity score model
 ```{r}
 fit.ps <- glm(treat ~ age + meno + size + grade3 + nodes + pgr + chemo + er, data=df_rotterdam, family="binomial")
@@ -565,22 +626,4 @@ with(res,lr^2/sig2_lr)
 with(res,z.score^2)
 ```
 
-
-Add duplicate subject (pid==51) for testing how plots mark ties
-```{r}
-df_add <- subset(df_gbsg, pid == 51)
-df_add$status <- 1.0
-df_mod <- rbind(df_gbsg, df_add)
-dfcount_mod <- get_dfcounting(df=df_mod, tte.name=tte.name, event.name=event.name, treat.name=treat.name, arms=arms)
-check_results(dfcount_mod)
-```
-
-For modified data
-```{r, fig.width = 10, fig.height=6}
-par(mfrow=c(1,2))
-# Add some room above 1 (ymax = 1.05)
-# Align median results with HR estimates (xmed.fraction)
-plot_weighted_km(dfcount_mod, ymax = 1.05, xmed.fraction = 0.65)
-plot_km(df=df_mod, tte.name=tte.name, event.name=event.name, treat.name=treat.name)
-```
 

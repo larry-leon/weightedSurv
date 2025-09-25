@@ -299,18 +299,13 @@ ans
 #' @param w_hat Subjects' weighting (eg. propensity-scores)
 #' @param G1.draws, G0.draws Optional: pre-generated random draws for groups
 #' @param draws Number of resampling iterations
-#' @param rho, gamma Weighting parameters
-#' @param t.tau, w0.tau, w1.tau Optional: custom weights
 #' @param seed.value Optional: random seed
-#' @param parallel Logical: use parallelization? (default FALSE)
-#' @param workers Number of parallel workers
 #' @return List with resampling results
 #' @importFrom stats var
 #' @export
 
 cox_rhogamma_resample <- function(fit_rhogamma, i_bhat, K_wt_rg, i_zero, K_zero, G1.draws = NULL, G0.draws = NULL,
-                                  draws = 100, seedstart=8316951,
-                                  workers = NULL
+                                  draws = 100, seedstart=8316951
 ) {
 
   bhat <- fit_rhogamma$bhat

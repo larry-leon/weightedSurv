@@ -1,0 +1,285 @@
+---
+title: "Weighted Cox Example 1"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, messages = FALSE)
+rm(list=ls())
+
+library(survival)
+library(weightedKMplots)
+library(tinytex)
+library(dplyr)
+library(data.table)
+library(gt)
+
+# Updated 
+# source('../R/kmplotting_helpers.R')
+# source('../R/weightedCox_simulations_helpers.R')
+# source('../R/weightedCox.R')
+# source('../R/weighted_helpers.R')
+# source('../R/df_counting.R')
+# source('../R/df_counting_helpers.R')
+# source('../R/km_wlr_calculations_helpers.R')
+
+
+# load these prior
+# source("R/kmplotting_helpers.R")
+# source("R/df_counting.R")
+# source("R/df_counting_helpers.R")
+# source("R/km_wlr_calculations_helpers_revised.R")
+# source("R/weightedCox.R")
+# source("R/weighted_helpers_revised.R")
+# source("R/weightedCox_simulations_helpers_revised.R")
+
+
+source('../R/kmplotting_helpers.R')
+source('../R/weighted_helpers_revised.R')
+source('../R/df_counting.R')
+source('../R/df_counting_helpers.R')
+source('../R/km_wlr_calculations_helpers_revised.R')
+source('../R/rmst_calculations.R')
+source("../R/weightedCox_revised.R")
+source("../R/weightedCox_simulations_helpers_revised.R")
+
+
+
+```
+
+
+
+```{r, eval=FALSE}
+# Brute force to identify Strong Null simulation where FH(0,1) rejects but fh_exp2 does not 
+load("~/Library/CloudStorage/OneDrive-MerckSharp&DohmeLLC/documents/GitHub/weightedKMplots/vignettes/results/wCoxsims1_linux_5k.RData")
+#load("/media/larryleon/My Projects/GitHub/weightedKMplots/vignettes/results/wCoxsims1_linux_5k.RData")
+# Extract strong-null scenario
+library(simtrial)
+sim_setup <- res_out$get_setup 
+# strong null
+dgm <- sim_setup$fr[c(14:17),]
+fail_rate <- data.frame(stratum = rep("All", 2 * nrow(dgm)),
+                          period = rep(dgm$Period, 2),
+                          treatment = c(rep("control", nrow(dgm)), 
+                                        rep("experimental", nrow(dgm))),
+                          duration = rep(dgm$duration, 2),
+                          rate = c(dgm$rate, dgm$rate * dgm$hr)
+                         )
+enroll_rate <- sim_setup$er 
+dropout_rate <- sim_setup$dropout_rate
+seedstart <- 8316951
+for(ss in 1:1000){
+thisseed <- 8316951 + 1000*ss
+set.seed(thisseed)
+
+dat <- sim_pw_surv(n = 698, enroll_rate = enroll_rate,
+                     fail_rate = fail_rate, dropout_rate = dropout_rate)
+
+analysis_data <- cut_data_by_date(dat, 36)
+dfa <- analysis_data
+dfa$treat <- ifelse(dfa$treatment=="experimental",1,0)
+
+dfcount <- get_dfcounting(df=dfa, tte.name = "tte", event.name = "event", treat.name = "treat", arms = "treatment", by.risk= 6, rho=0, gamma=1)
+z_rg <- dfcount$z.score
+get_rg <- cox_rhogamma(dfcount = dfcount, scheme = "fh_exp2", draws = 0, verbose = FALSE)
+z_fh <- get_rg$z.score 
+if(z_rg > 1.96 & z_fh < 1.96) cat("Check this out=",c(ss),"\n")
+}
+```
+
+
+# Simulate example
+```{r}
+load("~/Library/CloudStorage/OneDrive-MerckSharp&DohmeLLC/documents/GitHub/weightedKMplots/vignettes/results/wCoxsims1_linux_5k.RData")
+#load("/media/larryleon/My Projects/GitHub/weightedKMplots/vignettes/results/wCoxsims1_linux_5k.RData")
+# Extract strong-null scenario
+library(simtrial)
+sim_setup <- res_out$get_setup 
+# strong null
+dgm <- sim_setup$fr[c(14:17),]
+fail_rate <- data.frame(stratum = rep("All", 2 * nrow(dgm)),
+                          period = rep(dgm$Period, 2),
+                          treatment = c(rep("control", nrow(dgm)), 
+                                        rep("experimental", nrow(dgm))),
+                          duration = rep(dgm$duration, 2),
+                          rate = c(dgm$rate, dgm$rate * dgm$hr)
+                         )
+enroll_rate <- sim_setup$er 
+dropout_rate <- sim_setup$dropout_rate
+ss <- 87
+thisseed <- 8316951 + 1000*ss
+set.seed(thisseed)
+
+dat <- sim_pw_surv(n = 698, enroll_rate = enroll_rate,
+                     fail_rate = fail_rate, dropout_rate = dropout_rate)
+
+analysis_data <- cut_data_by_date(dat, 36)
+dfa <- analysis_data
+dfa$treat <- ifelse(dfa$treatment=="experimental",1,0)
+
+dfcount <- get_dfcounting(df=dfa, tte.name = "tte", event.name = "event", treat.name = "treat", arms = "treatment", by.risk= 3, 
+                          scheme = "fh", scheme_params = list(rho = 0, gamma = 1))
+
+
+
+```
+
+
+
+
+
+```{r, fig.width = 8, fig.height=6}
+plot_weighted_km(dfcount=dfcount, conf.int=TRUE, show.logrank = TRUE, ymax = 1.05)
+title(main="Simulated data")
+```
+
+```{r, fig.width = 8, fig.height=6}
+  temp <- plotKM.band_subgroups(
+    df=dfa,
+    xlabel="Months", ylabel="Survival difference",
+    yseq_length=5, cex_Yaxis=0.7, risk_cex=0.7,
+    by.risk = 3, risk_delta=0.075, risk.pad=0.03,
+    tte.name = "tte", treat.name = "treat", event.name = "event", draws.band = 5000, qtau = 0.025, show_resamples = FALSE
+  )
+  legend("topleft", c("Difference estimate", "95% pointwise CIs"),
+         lwd=c(2,1), col=c("black"), lty=c(1,2), bty="n", cex=0.75)
+  title(main="Simulated data")
+
+```
+
+
+
+
+```{r, fig.width = 8, fig.height=6, eval = FALSE}
+g <- plot_weight_schemes(dfcount)
+print(g)
+```
+
+
+
+# Cumulative weighted log-rank statistics
+```{r, fig.width = 8, fig.height=6}
+par(mfrow=c(2,2))
+
+ymin <- -3.5
+ymax <- 3.5
+
+temp <- wlr_cumulative(dfcount, scheme_params = list(rho = 0, gamma = 1), scheme = "fh", return_cumulative = TRUE)
+
+with(temp, plot(time, z.score, xlab="time", ylab="cumulative log-rank Z", type="s", ylim=c(ymin,ymax))
+)
+z01 <- temp$z.score
+rm("temp")
+abline(h = qnorm(0.975), lwd=2, col="red")
+
+title(main="FH(0,1)")
+temp <- wlr_cumulative(dfcount, scheme_params = list(rho = 0, gamma = 0), scheme = "fh", return_cumulative = TRUE)
+with(temp, plot(time, z.score, xlab="time", ylab="cumulative log-rank Z", type="s", ylim=c(ymin,ymax))
+     )
+rm("temp")
+abline(h = qnorm(0.975), lwd=2, col="red")
+title(main="FH(0,0)")
+
+temp <- wlr_cumulative(dfcount, scheme = "fh_exp2", return_cumulative = TRUE)
+with(temp, plot(time, z.score, xlab="time", ylab="cumulative log-rank Z", type="s", ylim=c(ymin,ymax)))
+abline(h = qnorm(0.975), lwd=2, col="red")
+z1 <- temp$z.score
+title(main="FH_exp2")
+rm("temp")
+
+temp <- wlr_cumulative(dfcount, scheme_params = list(mb_tstar = 12), scheme = "MB", return_cumulative = TRUE)
+with(temp, plot(time, z.score, xlab="time", ylab="cumulative log-rank Z", type="s", ylim=c(ymin,ymax))
+     )
+z2 <- temp$z.score
+abline(h = qnorm(0.975), lwd=2, col="red")
+title(main="MB(12)")
+
+par(mfrow=c(1,2))
+plot(temp$time, z2-z1, xlab="time", ylab="MB - FH_exp2", type="s")
+plot(temp$time, z01-z1, xlab="time", ylab="FH(0,1) - FH_exp2", type="s")
+
+
+```
+
+
+```{r}
+
+get_rg <- cox_rhogamma(dfcount, scheme = "fh", scheme_params = list(rho = 0, gamma = 0), draws = 1000, verbose = FALSE)
+
+
+res <- data.table()
+res$analysis <- "FH(0,0)"
+res$z <- get_rg$z.score
+res$hr <- get_rg$hr_ci_asy$hr
+res$lower <- get_rg$hr_ci_asy$lower
+res$upper <- get_rg$hr_ci_asy$upper
+
+#res$hrstar <- get_rg$hr_ci_star$hr
+#res$lowerstar <- get_rg$hr_ci_star$lower
+#res$upperstar <- get_rg$hr_ci_star$upper
+
+
+res_update <- res
+
+get_rg <- cox_rhogamma(dfcount = dfcount, scheme = "fh", scheme_params = list(rho = 0, gamma = 1), draws = 1000, verbose = FALSE)
+
+res <- data.table()
+res$analysis <- "FH(0,1)"
+res$z <- get_rg$z.score
+res$hr <- get_rg$hr_ci_asy$hr
+res$lower <- get_rg$hr_ci_asy$lower
+res$upper <- get_rg$hr_ci_asy$upper
+
+#res$hrstar <- get_rg$hr_ci_star$hr
+#res$lowerstar <- get_rg$hr_ci_star$lower
+#res$upperstar <- get_rg$hr_ci_star$upper
+
+
+res_update <- rbind(res_update, res)
+get_rg <- cox_rhogamma(dfcount = dfcount, scheme = "fh_exp2", draws = 1000, verbose = FALSE)
+res <- data.table()
+res$analysis <- "FH_exp2"
+res$z <- get_rg$z.score
+res$hr <- get_rg$hr_ci_asy$hr
+res$lower <- get_rg$hr_ci_asy$lower
+res$upper <- get_rg$hr_ci_asy$upper
+
+#res$hrstar <- get_rg$hr_ci_star$hr
+#res$lowerstar <- get_rg$hr_ci_star$lower
+#res$upperstar <- get_rg$hr_ci_star$upper
+
+res_update <- rbind(res_update, res)
+get_rg <- cox_rhogamma(dfcount = dfcount, scheme = "MB", scheme_params = list(mb_tstar = 12), draws = 1000, verbose = FALSE)
+res <- data.table()
+res$analysis <- "MB(12)"
+res$z <- get_rg$z.score
+res$hr <- get_rg$hr_ci_asy$hr
+res$lower <- get_rg$hr_ci_asy$lower
+res$upper <- get_rg$hr_ci_asy$upper
+
+#res$hrstar <- get_rg$hr_ci_star$hr
+#res$lowerstar <- get_rg$hr_ci_star$lower
+#res$upperstar <- get_rg$hr_ci_star$upper
+
+
+res_update <- rbind(res_update, res)
+
+get_rg <- cox_rhogamma(dfcount, scheme = "custom_time", scheme_params = list(t.tau = 6, w0.tau = 0, w1.tau = 1), draws = 1000, verbose = FALSE)
+res <- data.table()
+res$analysis <- "zero_one(6)"
+res$hr <- get_rg$hr_ci_asy$hr
+res$lower <- get_rg$hr_ci_asy$lower
+res$upper <- get_rg$hr_ci_asy$upper
+res$z <- get_rg$z.score
+res_update <- rbind(res_update, res)
+
+
+
+res_update %>% gt()  %>% fmt_number(decimals = 3) 
+
+
+```
+
+
+
+
