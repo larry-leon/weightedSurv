@@ -185,7 +185,7 @@ table_gt3 <- table_gt2 %>%
   tab_style(
     style = cell_fill(color = "#D3D3D3"),  # light grey
     locations = cells_body(
-      columns = "Logrank",
+      columns = "LR601",
       rows = Scenario == "6m delay"
     )
   )
@@ -194,7 +194,7 @@ table_gt4 <- table_gt3 %>%
   tab_style(
     style = cell_fill(color = "yellow"),  # light grey
     locations = cells_body(
-      columns = "LR601",
+      columns = "Logrank",
       rows = Scenario == "6m delay"
     )
   )
