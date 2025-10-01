@@ -17,5 +17,17 @@ RoxygenNote: 7.3.2
 Imports: 
     ggplot2,
     survival
+Suggests:
+  adjustedCurves,
+  arsenal,
+  data.table,
+  DiagrammeR,
+  dplyr,
+  gt,
+  knitr,
+  pammtools,
+  rmarkdown,
+  survminer
 URL: https://github.com/larry-leon/weightedSurv
 BugReports: https://github.com/larry-leon/weightedSurv/issues
+VignetteBuilder: knitr
