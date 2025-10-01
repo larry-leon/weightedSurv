@@ -467,6 +467,26 @@ plot_weighted_km(dfcount=dfcount_CTC_unwtd, conf.int = TRUE, xmed.fraction = 0.6
 title(main="CTC un-weighted K-M curves")
 ```
 
+
+## Cumulative weighted log-rank statistics
+
+We note that the log-rank test restricts comparisons to where both groups have follow-up
+
+As illustrated below we view the cumulative log-rank test.   Notice how it is flat for time points $\approx \geq 80$.
+
+```{r, fig.width = 8, fig.height=6}
+par(mfrow=c(1,1))
+ymin <- -1
+ymax <- 5
+temp <- wlr_cumulative(dfcount_CTC_wtd, scheme_params = list(rho = 0, gamma = 0), scheme = "fh", return_cumulative = TRUE)
+with(temp, plot(time, z.score, xlab="time", ylab="cumulative log-rank Z", type="s", ylim=c(ymin,ymax))
+)
+abline(h = qnorm(0.975), lwd=2, col="red")
+abline(v = 80, lwd=1, col="blue", lty=2)
+
+```
+
+
 ## With such dramatic difference in follow-up 
 
 It may make more sense to compare K-M differences and RMSTs over comparable 'horizon'
@@ -522,18 +542,6 @@ legend("topleft", c("Cumulative RMST estimate", "95% pointwise CIs"),
 ```
 
 
-# Cumulative weighted log-rank statistics
-```{r, fig.width = 8, fig.height=6}
-par(mfrow=c(1,1))
-ymin <- -1
-ymax <- 5
-temp <- wlr_cumulative(dfcount_CTC_wtd, scheme_params = list(rho = 0, gamma = 0), scheme = "fh", return_cumulative = TRUE)
-with(temp, plot(time, z.score, xlab="time", ylab="cumulative log-rank Z", type="s", ylim=c(ymin,ymax))
-)
-abline(h = qnorm(0.975), lwd=2, col="red")
-abline(v = 80, lwd=1, col="blue", lty=2)
-
-```
 
 
 
