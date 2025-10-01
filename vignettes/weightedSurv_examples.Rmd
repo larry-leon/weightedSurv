@@ -4,6 +4,7 @@ output:
   html_document:
          code_folding: hide
 bibliography: references.bib
+toc: true
 ---
 
 # Overview
@@ -138,7 +139,7 @@ Key Features
 * Plots the RMST curves and their confidence intervals along with simultaneous bands.
 
 
-```{r, message = FALSE}
+```{r, message = FALSE, warning = FALSE}
 rm(list=ls())
 library(tinytex)
 library(survival)
@@ -146,9 +147,11 @@ library(survival)
 # library(devtools)
 # github_install("larry-leon/weightedSurv")
 library(weightedSurv)
-
 library(dplyr)
 ```
+
+# GBSG data analysis example
+
 ---- Data Preparation ----
 Prepare GBSG data
 ```{r}
@@ -158,6 +161,8 @@ df_gbsg <- gbsg
 df_gbsg$tte <- df_gbsg$rfstime / 30.4375
 df_gbsg$event <- df_gbsg$status
 df_gbsg$treat <- df_gbsg$hormon
+df_gbsg$grade3 <- ifelse(df_gbsg$grade == "3", 1, 0)
+
 
 tte.name <- "tte"
 event.name <- "event"
@@ -182,7 +187,7 @@ by.risk = 12, scheme = "fh", scheme_params = list(rho = 0, gamma =0), lr.digits 
 ```
 
   
-# Show some weight functions
+## Show some weight functions
 
 ```{r, fig.width = 10, fig.height=6, warning = FALSE, message = FALSE}
 g <- plot_weight_schemes(dfcount_gbsg)
@@ -193,7 +198,7 @@ print(g)
 
 
 ---- Plotting ----
-GBSG KM plots
+## GBSG KM plots
 ```{r, fig.width = 10, fig.height=6}
 par(mfrow=c(1,2))
 # Mine
@@ -227,6 +232,7 @@ ggsurvplot(km_fit,conf.int=TRUE, risk.table = TRUE, break.time.by=12, xlim=c(0,8
            tables.height = 0.2, tables.theme = theme_cleantable(), censor=TRUE, main = "GBSG (trial) data un-weighted")
 ```
 
+# Rotterdam observational data analysis with weighting
 
 ---- Propensity Score Weighting (Rotterdam) ----
 
@@ -305,7 +311,7 @@ plot_weighted_km(dfcount=dfcount_rotterdam_wtd, xmed.fraction = 0.65)
 title(main="Rotterdam weighted K-M curves")
 
 ```
-Compare with GBSG trial data
+## Compare with GBSG trial data
 ```{r, fig.width = 10, fig.height=6}
 par(mfrow=c(1,2))
 plot_weighted_km(dfcount=dfcount_gbsg, conf.int = TRUE, xmed.fraction = 0.65, show.logrank = TRUE, ymax = 1.05)
@@ -316,7 +322,7 @@ title(main="Rotterdam weighted K-M curves")
 
 
 
-# Simultaneous bands and point-wise CIs
+### Simultaneous bands and point-wise CIs
 
 Note that the first graph displays 20 (1st 20) resampled approximations to the centered survival difference 
 
@@ -343,7 +349,7 @@ par(mfrow=c(1,2))
 ```
 
 
-## Compare Rotterdam observational data with propensity-score weighting and GBSG randomized data
+# Compare Rotterdam observational data with propensity-score weighting and GBSG randomized data
 
 ---- Simultaneous CI bands ----
 ```{r, fig.width = 10, fig.height = 10}
@@ -397,8 +403,127 @@ draws_sb = 1000, xlab="months", rmst_max_cex = 0.75)
 ```
 
 
+# Compare GBSG experimental to Rotterdam control
 
-Subgroup differences along with ITT simultaneous band:
+
+Propensity score model
+```{r}
+
+df_gbsg_treat <- subset(df_gbsg, treat == 1)
+df_rotterdam_control <- subset(df_rotterdam, treat == 0)
+
+df_gbsg_treat <- df_gbsg_treat %>%
+  mutate(
+    size = ifelse(size <= 20, "<=20", ifelse(size > 20 & size <=50, "20-50", ">50")),
+  )
+
+
+# note: GBSG does not have "chemo" variable
+
+df_gbsg_treat <- df_gbsg_treat[,c("tte","event","treat","age","meno","size","grade3","nodes","pgr","er")]
+df_rotterdam_control <- df_rotterdam_control[,c("tte","event","treat","age","meno","size","grade3","nodes","pgr","er")]
+
+# cross-trial-comparison (CTC)
+
+df_CTC <- rbind(df_gbsg_treat, df_rotterdam_control)
+
+fit.ps <- glm(treat ~ age + meno + size + grade3 + nodes + pgr + er, data = df_CTC, family="binomial")
+pihat <- fit.ps$fitted
+pihat.null <- glm(treat ~ 1, family="binomial", data = df_CTC)$fitted
+wt.1 <- pihat.null / pihat
+wt.0 <- (1 - pihat.null) / (1 - pihat)
+
+df_CTC$sw.weights <- ifelse(df_CTC$treat == 1, wt.1, wt.0)
+# truncated weights
+df_CTC$sw.weights_trunc <- with(df_CTC, pmin(pmax(sw.weights, quantile(sw.weights, 0.05)), quantile(sw.weights, 0.95)))
+```
+
+Baseline demographics table
+```{r}
+library(arsenal)
+df_CTC$er_negative <- ifelse(df_CTC$er == 0, 1, 0) 
+baseline_table <- tableby(treat ~ age + meno + size + grade3 + nodes + pgr + er_negative + er, data = df_CTC)
+```
+
+```{r results = 'asis'}
+summary(baseline_table, text = FALSE)
+```
+
+```{r}
+dfcount_CTC_unwtd <- get_dfcounting(df = df_CTC, tte.name=tte.name, event.name=event.name, treat.name=treat.name, arms=arms, by.risk=24)
+
+dfcount_CTC_wtd <- get_dfcounting(df=df_CTC, tte.name=tte.name, event.name=event.name, treat.name=treat.name, arms=arms, by.risk=24, 
+                                  weight.name="sw.weights")
+```
+
+
+
+```{r, fig.width = 10, fig.height=6}
+par(mfrow=c(2,2))
+plot_weighted_km(dfcount=dfcount_gbsg, conf.int = TRUE, xmed.fraction = 0.65, show.logrank = TRUE, ymax = 1.2, show.med = FALSE)
+title(main="GBSG (trial) data un-weighted K-M curves")
+plot_weighted_km(dfcount=dfcount_CTC_wtd, conf.int = TRUE, xmed.fraction = 0.65, show.logrank = TRUE, ymax = 1.2, show.med = FALSE)
+title(main="CTC weighted K-M curves")
+plot_weighted_km(dfcount=dfcount_CTC_unwtd, conf.int = TRUE, xmed.fraction = 0.65, show.logrank = TRUE, ymax = 1.2, show.med = FALSE)
+title(main="CTC un-weighted K-M curves")
+```
+
+## With such dramatic difference in follow-up 
+
+It may make more sense to compare K-M differences and RMSTs over comparable 'horizon'
+
+---- Simultaneous CI bands ----
+```{r, fig.width = 10, fig.height = 10}
+draws <- 1000
+par(mfrow=c(2,2))
+ 
+temp <- plotKM.band_subgroups(
+    df=df_gbsg, 
+    Maxtau = NULL,
+    xlabel="Months", ylabel="Survival difference",
+    yseq_length=5, cex_Yaxis=0.7, risk_cex=0.7,
+    by.risk = 6, risk_delta=0.075, risk.pad=0.03,
+    tte.name = tte.name, treat.name = treat.name, event.name = event.name, 
+    draws.band = draws, qtau = 0.025, show_resamples = FALSE
+  )
+  legend("topleft", c("Difference estimate", "95% pointwise CIs"),
+         lwd=c(2,1), col=c("black"), lty=c(1,2), bty="n", cex=0.75)
+  title(main="GBSG data")
+
+  
+get_bands <- cumulative_rmst_bands(df = df_gbsg, fit = temp$fit_itt, 
+tte.name = tte.name, event.name = event.name, treat.name = treat.name, 
+draws_sb = draws, xlab="months", rmst_max_cex = 0.75)
+  legend("topleft", c("Cumulative RMST estimate", "95% pointwise CIs"),
+         lwd=c(2,1), col=c("black"), lty=c(1,2), bty="n", cex=0.75)
+
+
+
+ temp <- plotKM.band_subgroups(
+    df=df_CTC,
+    xlabel="Months", ylabel="Survival difference",
+    yseq_length=5, cex_Yaxis=0.7, risk_cex=0.7,
+    tau_add=42, by.risk = 12, risk_delta=0.075, risk.pad=0.03, ymax.pad = 0.125,
+    tte.name = tte.name, treat.name = treat.name, event.name = event.name, weight.name ="sw.weights",
+    draws.band = draws, qtau = 0.025, show_resamples = FALSE
+  )
+  legend("topleft", c("Difference estimate", "95% pointwise CIs"),
+         lwd=c(2,1), col=c("black"), lty=c(1,2), bty="n", cex=0.7)
+  title(main="CTC data")
+
+get_bands <- cumulative_rmst_bands(df = df_CTC, fit = temp$fit_itt, 
+tte.name = tte.name, event.name = event.name, treat.name = treat.name , weight.name = "sw.weights", 
+draws_sb = draws, xlab="months", rmst_max_cex = 0.7)
+
+legend("topleft", c("Cumulative RMST estimate", "95% pointwise CIs"),
+         lwd=c(2,1), col=c("black"), lty=c(1,2), bty="n", cex=0.7)
+
+
+
+```
+
+
+# GBSG *subgroup* differences along with ITT simultaneous band:
 
 Note that er=0 subgroup was identified as questionable benefit.
 
@@ -419,7 +544,7 @@ sg_cols <- c("blue", "brown", "green", "turquoise")
     sg_colors = sg_cols,
     xlabel="Months", ylabel="Survival difference",
     yseq_length=5, cex_Yaxis=0.7, risk_cex=0.7,
-    tau_add=42, by.risk=6, risk_delta=0.05, risk.pad=0.03, draws.band = 5000,
+    tau_add=42, by.risk=6, risk_delta=0.05, risk.pad=0.03, draws.band = 1000,
     tte.name = tte.name, treat.name = treat.name, event.name = event.name 
   )
   legend("topleft", c("ITT", sg_labs),
@@ -428,7 +553,7 @@ sg_cols <- c("blue", "brown", "green", "turquoise")
 
 ```
 
-Look at er>0 subgroup population
+## Look at GBSG er>0 subgroup population
 
 ---- Simultaneous CI bands ----
 ```{r, fig.width = 12, fig.height=6}
@@ -438,7 +563,7 @@ par(mfrow=c(1,2))
     xlabel="Months", ylabel="Survival difference",
     yseq_length=5, cex_Yaxis=0.7, risk_cex=0.7,
     by.risk=6, risk_delta=0.075, risk.pad=0.03,
-    tte.name = tte.name, treat.name = treat.name, event.name = event.name, draws.band = 5000, qtau = 0.025, show_resamples = TRUE
+    tte.name = tte.name, treat.name = treat.name, event.name = event.name, draws.band = 1000, qtau = 0.025, show_resamples = TRUE
   )
   legend("topleft", c("Difference estimate", "95% pointwise CIs"),
          lwd=c(2,1), col=c("black"), lty=c(1,2), bty="n", cex=0.75)
@@ -447,16 +572,18 @@ par(mfrow=c(1,2))
   
 ```
 
-# Weighted Cox Analysis with time-dependent, and subject-specific [ps weighting] weighting
+# Weighted Cox Analysis of Rotterdam data with time-dependent, and subject-specific [ps weighting] weighting
 
-```{r}
+```{r, messages = FALSE, warning = FALSE}
 library(data.table)
 library(gt)
 
 dfcount <- dfcount_rotterdam_wtd
 
 get_rg <- cox_rhogamma(dfcount = dfcount, scheme = "fh", scheme_params = list(rho = 0, gamma = 0), draws = 1000, verbose = FALSE)
+
 # Note: with case-weights (here propensity-score weighting) recommend asymptotic versions of SEs
+
 res <- data.table()
 res$analysis <- "FH(0,0)"
 res$z <- get_rg$z.score
@@ -465,9 +592,10 @@ res$lower <- get_rg$hr_ci_star$lower
 res$upper <- get_rg$hr_ci_star$upper
 # res$lower <- get_rg$hr_ci_asy$lower
 # res$upper <- get_rg$hr_ci_asy$upper
+
 # compare with coxph() 
-cat("Comparison with coxph with weighting, coxph:", dfcount$cox_results$cox_text, "\n")
-cat("Mine:", get_rg$cox_text_star, "\n")
+#cat("Comparison with coxph with weighting, coxph:", dfcount$cox_results$cox_text, "\n")
+#cat("Mine:", get_rg$cox_text_star, "\n")
 
 res_update <- res
 
