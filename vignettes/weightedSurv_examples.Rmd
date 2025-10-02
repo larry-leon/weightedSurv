@@ -4,6 +4,10 @@ output:
   html_document:
          code_folding: hide
 bibliography: references.bib
+vignette: >
+  %\VignetteIndexEntry{Weighted Survival Analysis Examples}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 ---
 
 # Overview
@@ -139,8 +143,6 @@ Key Features
 
 
 ```{r, message = FALSE, warning = FALSE}
-rm(list=ls())
-library(tinytex)
 library(survival)
 # to install weightedKMplots
 # library(devtools)
