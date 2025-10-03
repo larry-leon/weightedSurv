@@ -225,6 +225,7 @@ get_validated_weights <- function(df_weights,
 #' @return A ggplot object showing the weight schemes over time.
 #' @details This function visualizes the weights used in various survival analysis schemes (e.g., FH, MB, custom) using ggplot2. Facets and colors are customizable.
 #' @importFrom ggplot2 ggplot aes geom_line facet_wrap scale_color_manual scale_size_manual scale_linewidth_manual labs theme_minimal
+#' @importFrom rlang .data
 #' @export
 
 plot_weight_schemes <- function(
@@ -273,8 +274,8 @@ plot_weight_schemes <- function(
   df_weights$weight_trans <- with(df_weights,
                                   if (transform_fh) ifelse(scheme %in% c('fh'), exp(weight), weight) else weight
   )
-  g <- ggplot(df_weights, aes(x = time, y = weight_trans, linetype = label)) +
-    geom_line(aes(color = label, linewidth = label)) +
+  g <- ggplot(df_weights, aes(x = .data$time, y = .data$weight_trans, linetype = .data$label)) +
+    geom_line(aes(color = .data$label, linewidth = .data$label)) +
     facet_wrap(~ facet_group, scales = 'free_y') +
     scale_color_manual(values = custom_colors) +
     scale_linewidth_manual(values = custom_sizes) +
