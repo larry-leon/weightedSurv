@@ -2,7 +2,7 @@
 % Please edit documentation in R/df_counting_helpers.R
 \name{get_dfcounting}
 \alias{get_dfcounting}
-\title{Get df_counting}
+\title{Get df_counting results}
 \usage{
 get_dfcounting(
   df,
@@ -24,6 +24,44 @@ get_dfcounting(
   check.seKM = FALSE
 )
 }
+\arguments{
+\item{df}{Data frame containing survival data.}
+
+\item{tte.name}{Name of time-to-event column.}
+
+\item{event.name}{Name of event indicator column.}
+
+\item{treat.name}{Name of treatment/group column.}
+
+\item{arms}{Vector of treatment arms/groups.}
+
+\item{by.risk}{Risk interval (default 12).}
+
+\item{cox.digits}{Digits for Cox model output (default 3).}
+
+\item{lr.digits}{Digits for logrank output (default 3).}
+
+\item{qprob}{Quantile probability (default 0.50).}
+
+\item{strata.name}{Name of strata column (optional).}
+
+\item{weight.name}{Name of weights column (optional).}
+
+\item{check.KM}{Logical; check KM curves (default TRUE).}
+
+\item{scheme}{Scheme for analysis (default "fh").}
+
+\item{scheme_params}{List of scheme parameters (default list(rho = 0, gamma = 0)).}
+
+\item{draws}{Number of draws for variance estimation (default 0).}
+
+\item{seedstart}{Random seed (default 8316951).}
+
+\item{check.seKM}{Logical; check KM standard error (default FALSE).}
+}
+\value{
+Result from df_counting or NULL if error.
+}
 \description{
-Get df_counting
+Wrapper for df_counting, safely executes and returns results for survival analysis.
 }

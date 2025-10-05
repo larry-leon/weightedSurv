@@ -18,8 +18,8 @@ score_calculation(ybar1, ybar0, dN1, dN0, wt_rg)
 \item{wt_rg}{Numeric vector of rho-gamma weights.}
 }
 \value{
-Numeric value of the score.
+List with score, variance, information, and weights.
 }
 \description{
-Calculates the score for the weighted Cox model.
+Calculates the score and variance for the weighted Cox model.
 }

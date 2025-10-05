@@ -1,6 +1,21 @@
 
-
 #' Compute Time-Dependent Weights for Survival Analysis
+#'
+#' Calculates time-dependent weights for survival analysis according to various schemes (Fleming-Harrington, Schemper, XO, MB, custom).
+#'
+#' @param S Numeric vector of survival probabilities.
+#' @param scheme Character string specifying the weighting scheme. One of 'fh', 'schemper', 'XO', 'MB', 'custom_time', 'fh_exp1', 'fh_exp2'.
+#' @param rho Numeric; rho parameter for FH weights.
+#' @param gamma Numeric; gamma parameter for FH weights.
+#' @param Scensor Numeric vector; censoring KM curve for Schemper weights.
+#' @param Ybar Numeric vector; risk set sizes for XO weights.
+#' @param tpoints Numeric vector; time points for MB/custom_time weights.
+#' @param t.tau Numeric; cutoff time for custom_time weights.
+#' @param w0.tau Numeric; weight before t.tau for custom_time weights.
+#' @param w1.tau Numeric; weight after t.tau for custom_time weights.
+#' @param mb_tstar Numeric; cutoff time for MB weights.
+#' @param details Logical; if TRUE, returns detailed output.
+#' @return Numeric vector of weights, or list if details=TRUE.
 #' @export
 
 wt.rg.S <- function(
@@ -144,8 +159,11 @@ extract_and_calc_weights <- function(atpoints, S.pool, weights_spec_list) {
 #' Validates and returns weights for a data frame according to specified schemes.
 #'
 #' @param df_weights Data frame containing weights and related data.
+#' @param scheme Character string specifying the weighting scheme.
+#' @param scheme_params List of parameters for the scheme.
+#' @param details Logical; if TRUE, returns detailed output.
 #' @param ... Additional arguments.
-#' @return Data frame with validated weights.
+#' @return Numeric vector or list of validated weights.
 #' @export
 
 get_validated_weights <- function(df_weights,
@@ -204,8 +222,6 @@ get_validated_weights <- function(df_weights,
 #' @param custom_sizes Named numeric vector of line sizes for each scheme.
 #' @param transform_fh Logical; whether to transform FH weights (default: FALSE).
 #' @param rescheme_fhexp2 Logical; whether to rescheme FHexp2 and custom_time (default: TRUE).
-#' @param time is calculated with df_weights call
-#' @param weight_trans is a transformed version of fh_exp2 to display with MB
 #' @return A ggplot object showing the weight schemes over time.
 #' @details This function visualizes the weights used in various survival analysis schemes (e.g., FH, MB, custom) using ggplot2. Facets and colors are customizable.
 #' @importFrom ggplot2 ggplot aes geom_line facet_wrap scale_color_manual scale_size_manual scale_linewidth_manual labs theme_minimal

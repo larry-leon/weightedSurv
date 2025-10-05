@@ -16,7 +16,7 @@ ci_cox(bhat, sig_bhat, alpha = 0.05, verbose = FALSE)
 \item{verbose}{Logical; if TRUE, prints interval.}
 }
 \value{
-Numeric vector with lower and upper confidence limits.
+Data frame with log hazard ratio, standard error, hazard ratio, lower and upper confidence limits.
 }
 \description{
 Calculates the confidence interval for a Cox model log hazard ratio estimate.

@@ -17,5 +17,5 @@ format_pval(pval, eps = 0.001, digits = 3)
 Formatted p-value as character.
 }
 \description{
-Format p-value for display
+Formats a p-value for display, showing "<eps" for small values.
 }

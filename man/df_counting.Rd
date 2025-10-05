@@ -2,7 +2,7 @@
 % Please edit documentation in R/df_counting.R
 \name{df_counting}
 \alias{df_counting}
-\title{Creates a counting process dataset for survival analysis}
+\title{Weighted and stratified survival analysis with Cox and logrank tests}
 \usage{
 df_counting(
   df,
@@ -36,59 +36,66 @@ df_counting(
 )
 }
 \arguments{
-\item{df}{Data frame containing the survival data.}
+\item{df}{Data frame containing survival data.}
 
-\item{tte.name}{Name of the time-to-event variable (string).}
+\item{tte.name}{Name of the time-to-event column in df.}
 
-\item{event.name}{Name of the event indicator variable (string, 1=event, 0=censored).}
+\item{event.name}{Name of the event indicator column in df (1=event, 0=censored).}
 
-\item{treat.name}{Name of the treatment group variable (string, 0=control, 1=treatment).}
+\item{treat.name}{Name of the treatment/group column in df (must be coded as 0=control, 1=experimental).}
 
-\item{weight.name}{Optional name of the weights variable (string, default NULL).}
+\item{weight.name}{Optional; name of the weights column in df.}
 
-\item{strata.name}{Optional name of the stratification variable (string, default NULL).}
+\item{strata.name}{Optional; name of the strata column in df.}
 
-\item{arms}{Character vector of length 2 with names for treatment and control arms.}
+\item{arms}{Character vector of group labels (default c("treat","control")).}
 
-\item{time.zero}{Time value to use as zero (default 0).}
+\item{time.zero}{Numeric; time value to use as zero (default 0).}
 
-\item{tpoints.add}{Additional time points to include (numeric vector, default 0).}
+\item{tpoints.add}{Numeric vector; additional time points to include (default c(0)).}
 
-\item{by.risk}{Interval for risk table (default 6).}
+\item{by.risk}{Numeric; interval for risk points (default 6).}
 
-\item{time.zero.label}{Label for time zero (default 0.0).}
+\item{time.zero.label}{Numeric; label for time zero (default 0.0).}
 
-\item{risk.add}{Additional risk points (numeric vector, default NULL).}
+\item{risk.add}{Numeric vector; additional risk points to include (default NULL).}
 
-\item{get.cox}{Logical; whether to compute Cox model results (default TRUE).}
+\item{get.cox}{Logical; whether to fit Cox model (default TRUE).}
 
-\item{cox.digits}{Number of digits for Cox model results (default 2).}
+\item{cox.digits}{Integer; number of digits for Cox output (default 2).}
 
-\item{lr.digits}{Number of digits for log-rank results (default 2).}
+\item{lr.digits}{Integer; number of digits for logrank output (default 2).}
 
-\item{cox.eps}{Threshold for Cox p-value formatting (default 0.001).}
+\item{cox.eps}{Numeric; threshold for Cox p-value formatting (default 0.001).}
 
-\item{lr.eps}{Threshold for log-rank p-value formatting (default 0.001).}
+\item{lr.eps}{Numeric; threshold for logrank p-value formatting (default 0.001).}
 
-\item{qprob}{Quantile probability for median/quantile estimation (default 0.5).}
+\item{verbose}{Logical; print warnings/errors (default FALSE).}
 
-\item{conf_level}{Confidence level for quantile CI (default 0.95).}
+\item{qprob}{Numeric; quantile probability for KM quantile table (default 0.5).}
 
-\item{check.KM}{Logical; whether to check KM curve fits (default TRUE).}
+\item{scheme}{Character; weighting scheme for logrank/FH test (default \"fh\").}
 
-\item{stop.onerror}{Logical; whether to stop on error (default FALSE).}
+\item{scheme_params}{List; parameters for weighting scheme (default list(rho = 0, gamma = 0)).}
 
-\item{censoring_allmarks}{Logical; whether to mark all censoring times (default TRUE).}
+\item{conf_level}{Numeric; confidence level for quantiles (default 0.95).}
 
-\item{rho}{Weighting parameter for log-rank test (default 0).}
+\item{check.KM}{Logical; check KM curve fits (default TRUE).}
 
-\item{gamma}{Weighting parameter for log-rank test (default 0).}
+\item{check.seKM}{Logical; check KM standard error fits (default FALSE).}
+
+\item{draws}{Integer; number of draws for variance estimation (default 0).}
+
+\item{seedstart}{Integer; random seed for draws (default 8316951).}
+
+\item{stop.onerror}{Logical; stop on error (default FALSE).}
+
+\item{censoring_allmarks}{Logical; if FALSE, remove events from censored (default TRUE).}
 }
 \value{
-A list containing risk set, event counts, KM estimates, log-rank and Cox results, quantiles, and more.
+A list containing Cox model results, logrank results, risk/event sets, KM curves, quantiles, variance estimates, and diagnostic checks.
 }
 \description{
-This function prepares a dataset for survival analysis using the counting process approach,
-including risk set, event counts, Kaplan-Meier estimates, log-rank and Cox model results,
-and quantile estimates for two groups (treatment and control).
+Performs weighted and/or stratified survival analysis, including Cox proportional hazards model,
+logrank/Fleming-Harrington tests, and calculation of risk/event sets, Kaplan-Meier curves, quantiles, and variance estimates.
 }

@@ -19,5 +19,5 @@ kmq_calculations(time_points, survival_probs, qprob = 0.5, type = "midpoint")
 Estimated quantile time.
 }
 \description{
-Kaplan-Meier quantile calculation
+Calculates the quantile time for a Kaplan-Meier curve.
 }

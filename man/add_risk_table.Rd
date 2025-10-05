@@ -19,28 +19,28 @@ add_risk_table(
 )
 }
 \arguments{
-\item{risk.points}{Risk time points}
+\item{risk.points}{Numeric vector of risk time points.}
 
-\item{rpoints0}{Risk set for group 0}
+\item{rpoints0}{Numeric vector of risk set counts for group 0.}
 
-\item{rpoints1}{Risk set for group 1}
+\item{rpoints1}{Numeric vector of risk set counts for group 1.}
 
-\item{col.0}{Color for group 0}
+\item{col.0}{Color for group 0.}
 
-\item{col.1}{Color for group 1}
+\item{col.1}{Color for group 1.}
 
-\item{risk.cex}{Text size for risk table}
+\item{risk.cex}{Numeric; text size for risk table.}
 
-\item{ymin}{Minimum y value}
+\item{ymin}{Numeric; minimum y value.}
 
-\item{risk_offset}{Offset for risk table}
+\item{risk_offset}{Numeric; offset for risk table.}
 
-\item{risk_delta}{Delta for risk table}
+\item{risk_delta}{Numeric; delta for risk table.}
 
-\item{y.risk0}{Y position for group 0 risk table}
+\item{y.risk0}{Numeric; y position for group 0 risk table.}
 
-\item{y.risk1}{Y position for group 1 risk table}
+\item{y.risk1}{Numeric; y position for group 1 risk table.}
 }
 \description{
-Add risk table annotation to KM plot
+Adds risk set counts for two groups to a Kaplan-Meier plot.
 }

@@ -7,16 +7,16 @@
 plot_km_confint_polygon(x, surv, se, conf_level, col)
 }
 \arguments{
-\item{x}{Time points}
+\item{x}{Numeric vector of time points.}
 
-\item{surv}{Survival probabilities}
+\item{surv}{Numeric vector of survival probabilities.}
 
-\item{se}{Standard errors of survival probabilities}
+\item{se}{Numeric vector of standard errors of survival probabilities.}
 
-\item{conf_level}{Confidence level (default 0.95)}
+\item{conf_level}{Confidence level for interval (default 0.95).}
 
-\item{col}{Polygon color}
+\item{col}{Color for the polygon.}
 }
 \description{
-Plot confidence interval polygon for KM curve
+Plots a shaded polygon representing the confidence interval for a Kaplan-Meier survival curve.
 }

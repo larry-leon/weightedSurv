@@ -6,6 +6,12 @@
 \usage{
 safe_run(expr)
 }
+\arguments{
+\item{expr}{An R expression to evaluate.}
+}
+\value{
+The result of expr, or NULL if an error occurs.
+}
 \description{
-Safe execution wrapper
+Executes an R expression safely, returning NULL and printing an error message if an error occurs.
 }

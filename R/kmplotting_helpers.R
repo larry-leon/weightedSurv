@@ -1,11 +1,13 @@
 
 #' Plot confidence interval polygon for KM curve
 #'
-#' @param x Time points
-#' @param surv Survival probabilities
-#' @param se Standard errors of survival probabilities
-#' @param conf_level Confidence level (default 0.95)
-#' @param col Polygon color
+#' Plots a shaded polygon representing the confidence interval for a Kaplan-Meier survival curve.
+#'
+#' @param x Numeric vector of time points.
+#' @param surv Numeric vector of survival probabilities.
+#' @param se Numeric vector of standard errors of survival probabilities.
+#' @param conf_level Confidence level for interval (default 0.95).
+#' @param col Color for the polygon.
 #' @importFrom graphics polygon
 #' @export
 
@@ -22,33 +24,35 @@ plot_km_confint_polygon <- function(x, surv, se, conf_level, col) {
 
 #' Plot KM curves for two groups with optional confidence intervals and censoring marks
 #'
-#' @param at_points Time points for plotting
-#' @param S0.KM Survival probabilities for group 0
-#' @param idx0 Indices for censoring in group 0
-#' @param idv0 Indices for events in group 0
-#' @param S1.KM Survival probabilities for group 1
-#' @param idx1 Indices for censoring in group 1
-#' @param idv1 Indices for events in group 1
-#' @param col.0 Color for group 0
-#' @param col.1 Color for group 1
-#' @param ltys Line types for groups
-#' @param lwds Line widths for groups
-#' @param Xlab X-axis label
-#' @param Ylab Y-axis label
-#' @param ylim Y-axis limits
-#' @param xlim X-axis limits
-#' @param show.ticks Show censoring marks (default FALSE)
-#' @param cens0 Censoring times for group 0
-#' @param risk.points Risk time points
-#' @param risk.points.label Labels for risk time points
-#' @param cens1 Censoring times for group 1
-#' @param se0.KM Standard errors for group 0
-#' @param se1.KM Standard errors for group 1
-#' @param conf.int Show confidence intervals (default FALSE)
-#' @param conf_level Confidence level (default 0.95)
-#' @param censor.cex Censoring mark size (default 1.0)
-#' @param ... Additional arguments to plot
-#' @importFrom graphics plot lines legend title axis box
+#' Plots Kaplan-Meier survival curves for two groups, with options for confidence intervals and censoring marks.
+#'
+#' @param at_points Numeric vector of time points for plotting.
+#' @param S0.KM Numeric vector of survival probabilities for group 0.
+#' @param idx0 Indices for censoring in group 0.
+#' @param idv0 Indices for events in group 0.
+#' @param S1.KM Numeric vector of survival probabilities for group 1.
+#' @param idx1 Indices for censoring in group 1.
+#' @param idv1 Indices for events in group 1.
+#' @param col.0 Color for group 0.
+#' @param col.1 Color for group 1.
+#' @param ltys Line types for groups.
+#' @param lwds Line widths for groups.
+#' @param Xlab X-axis label.
+#' @param Ylab Y-axis label.
+#' @param ylim Y-axis limits.
+#' @param xlim X-axis limits.
+#' @param show.ticks Logical; show censoring marks (default FALSE).
+#' @param cens0 Numeric vector of censoring times for group 0.
+#' @param risk.points Numeric vector of risk time points.
+#' @param risk.points.label Character vector of labels for risk time points.
+#' @param cens1 Numeric vector of censoring times for group 1.
+#' @param se0.KM Numeric vector of standard errors for group 0.
+#' @param se1.KM Numeric vector of standard errors for group 1.
+#' @param conf.int Logical; show confidence intervals (default FALSE).
+#' @param conf_level Confidence level (default 0.95).
+#' @param censor.cex Numeric; censoring mark size (default 1.0).
+#' @param ... Additional arguments to plot.
+#' @importFrom graphics plot lines legend title axis box points
 #' @export
 
 plot_km_curves_counting <- function(
@@ -89,9 +93,12 @@ plot_km_curves_counting <- function(
 
 #' Check KM curve for validity
 #'
-#' @param S.KM Survival probabilities
-#' @param group_name Name of the group
-#' @param stop_on_error Whether to stop on error (default TRUE)
+#' Checks that a Kaplan-Meier curve is valid (values in [0,1], non-increasing).
+#'
+#' @param S.KM Numeric vector of survival probabilities.
+#' @param group_name Character; name of the group.
+#' @param stop_on_error Logical; whether to stop on error (default TRUE).
+#' @return None. Stops or warns if invalid.
 #' @export
 
 check_km_curve <- function(S.KM, group_name = "Group", stop_on_error = TRUE) {
@@ -107,17 +114,19 @@ check_km_curve <- function(S.KM, group_name = "Group", stop_on_error = TRUE) {
 
 #' Add risk table annotation to KM plot
 #'
-#' @param risk.points Risk time points
-#' @param rpoints0 Risk set for group 0
-#' @param rpoints1 Risk set for group 1
-#' @param col.0 Color for group 0
-#' @param col.1 Color for group 1
-#' @param risk.cex Text size for risk table
-#' @param ymin Minimum y value
-#' @param risk_offset Offset for risk table
-#' @param risk_delta Delta for risk table
-#' @param y.risk0 Y position for group 0 risk table
-#' @param y.risk1 Y position for group 1 risk table
+#' Adds risk set counts for two groups to a Kaplan-Meier plot.
+#'
+#' @param risk.points Numeric vector of risk time points.
+#' @param rpoints0 Numeric vector of risk set counts for group 0.
+#' @param rpoints1 Numeric vector of risk set counts for group 1.
+#' @param col.0 Color for group 0.
+#' @param col.1 Color for group 1.
+#' @param risk.cex Numeric; text size for risk table.
+#' @param ymin Numeric; minimum y value.
+#' @param risk_offset Numeric; offset for risk table.
+#' @param risk_delta Numeric; delta for risk table.
+#' @param y.risk0 Numeric; y position for group 0 risk table.
+#' @param y.risk1 Numeric; y position for group 1 risk table.
 #' @importFrom graphics text axis
 #' @export
 
@@ -130,12 +139,14 @@ add_risk_table <- function(risk.points, rpoints0, rpoints1, col.0, col.1, risk.c
 
 #' Add median annotation to KM plot
 #'
-#' @param medians_df Data frame with quantile results
-#' @param med.digits Digits for median
-#' @param med.cex Text size for median
-#' @param med.font Font for median
-#' @param xmed.fraction X position fraction
-#' @param ymed.offset Y offset
+#' Adds median survival annotation to a Kaplan-Meier plot.
+#'
+#' @param medians_df Data frame with quantile results.
+#' @param med.digits Integer; digits for median.
+#' @param med.cex Numeric; text size for median.
+#' @param med.font Integer; font for median.
+#' @param xmed.fraction Numeric; x position fraction.
+#' @param ymed.offset Numeric; y offset.
 #' @importFrom graphics text
 #' @export
 
@@ -159,21 +170,23 @@ add_median_annotation <- function(medians_df, med.digits, med.cex, med.font, xme
 
 #' Add legends to KM plot
 #'
-#' @param dfcount List with results
-#' @param show.cox Show Cox legend
-#' @param cox.cex Cox legend size
-#' @param put.legend.cox Cox legend position
-#' @param show.logrank Show logrank legend
-#' @param logrank.cex Logrank legend size
-#' @param put.legend.lr Logrank legend position
-#' @param show_arm_legend Show arm legend
-#' @param arms Arm labels
-#' @param col.1 Color for group 1
-#' @param col.0 Color for group 0
-#' @param ltys Line types
-#' @param lwds Line widths
-#' @param arm.cex Arm legend size
-#' @param put.legend.arms Arm legend position
+#' Adds legends for Cox model, log-rank test, and arms to a Kaplan-Meier plot.
+#'
+#' @param dfcount List with results.
+#' @param show.cox Logical; show Cox legend.
+#' @param cox.cex Numeric; Cox legend size.
+#' @param put.legend.cox Character; Cox legend position.
+#' @param show.logrank Logical; show logrank legend.
+#' @param logrank.cex Numeric; logrank legend size.
+#' @param put.legend.lr Character; logrank legend position.
+#' @param show_arm_legend Logical; show arm legend.
+#' @param arms Character vector of arm labels.
+#' @param col.1 Color for group 1.
+#' @param col.0 Color for group 0.
+#' @param ltys Line types.
+#' @param lwds Line widths.
+#' @param arm.cex Numeric; arm legend size.
+#' @param put.legend.arms Character; arm legend position.
 #' @importFrom graphics legend
 #' @export
 
@@ -192,60 +205,40 @@ add_legends <- function(dfcount, show.cox, cox.cex, put.legend.cox, show.logrank
 
 #' Plot Weighted Kaplan-Meier Curves for Two Samples (Counting Process Format)
 #'
-#' Plots Kaplan-Meier survival curves for two groups (e.g., treatment and control) using precomputed
-#' risk/event counts and survival estimates in counting process format. Optionally displays confidence intervals,
-#' risk tables, median survival annotations, and statistical test results (Cox, log-rank).
+#' Plots Kaplan-Meier survival curves for two groups using precomputed risk/event counts and survival estimates.
+#' Optionally displays confidence intervals, risk tables, median survival annotations, and statistical test results.
 #'
-#' @param dfcount List containing precomputed survival data (see Details).
-#' @param show.cox Logical; whether to display Cox model results (default: FALSE).
-#' @param cox.cex Text size for Cox model annotation.
-#' @param show.logrank Logical; whether to display log-rank test results (default: FALSE).
-#' @param logrank.cex Text size for log-rank annotation.
-#' @param cox.eps, lr.eps Small values for Cox/log-rank calculations.
-#' @param show_arm_legend Logical; whether to show arm legend.
+#' @param dfcount List containing precomputed survival data.
+#' @param show.cox Logical; show Cox model results.
+#' @param cox.cex Numeric; text size for Cox annotation.
+#' @param show.logrank Logical; show log-rank test results.
+#' @param logrank.cex Numeric; text size for log-rank annotation.
+#' @param cox.eps, lr.eps Numeric; small values for Cox/log-rank calculations.
+#' @param show_arm_legend Logical; show arm legend.
 #' @param arms Character vector of arm labels.
-#' @param put.legend.arms, put.legend.cox, put.legend.lr Legend positions.
-#' @param stop.onerror Logical; whether to stop on KM curve errors.
-#' @param check.KM Logical; whether to check KM curve validity.
-#' @param lr.digits, cox.digits Number of digits for test results.
-#' @param tpoints.add Additional time points for risk table.
-#' @param by.risk Interval for risk table time points.
-#' @param Xlab, Ylab Axis labels.
-#' @param col.0, col.1 Colors for control and treatment curves.
-#' @param show.med Logical; whether to annotate median survival.
+#' @param put.legend.arms, put.legend.cox, put.legend.lr Character; legend positions.
+#' @param stop.onerror Logical; stop on KM curve errors.
+#' @param check.KM Logical; check KM curve validity.
+#' @param lr.digits, cox.digits Integer; digits for test results.
+#' @param tpoints.add Numeric; additional time points for risk table.
+#' @param by.risk Numeric; interval for risk table time points.
+#' @param Xlab, Ylab Character; axis labels.
+#' @param col.0, col.1 Color for control and treatment curves.
+#' @param show.med Logical; annotate median survival.
 #' @param med.digits, med.font, med.cex, ymed.offset, xmed.fraction Median annotation settings.
-#' @param conf.int Logical; whether to plot confidence intervals.
-#' @param conf_level Confidence level for intervals.
-#' @param choose_ylim Logical; whether to auto-select y-axis limits.
-#' @param arm.cex Text size for arm legend.
-#' @param quant, qlabel Quantile and label for annotation.
-#' @param risk.cex Text size for risk table.
-#' @param ltys, lwds Line types and widths for curves.
-#' @param censor.mark.all Logical; whether to mark all censored times.
-#' @param censor.cex Size of censor marks.
-#' @param show.ticks Logical; whether to show axis ticks.
-#' @param risk.set Logical; whether to display risk table.
+#' @param conf.int Logical; plot confidence intervals.
+#' @param conf_level Numeric; confidence level for intervals.
+#' @param choose_ylim Logical; auto-select y-axis limits.
+#' @param arm.cex Numeric; text size for arm legend.
+#' @param quant, qlabel Numeric/character; quantile and label for annotation.
+#' @param risk.cex Numeric; text size for risk table.
+#' @param ltys, lwds Integer; line types and widths for curves.
+#' @param censor.mark.all Logical; mark all censored times.
+#' @param censor.cex Numeric; size of censor marks.
+#' @param show.ticks Logical; show axis ticks.
+#' @param risk.set Logical; display risk table.
 #' @param ymin, ymax, ymin.del, ymin2, risk_offset, risk_delta, y.risk0, y.risk1, show.Y.axis, cex_Yaxis, add.segment, risk.add, xmin, xmax, x.truncate, time.zero, prob.points Additional graphical and calculation parameters.
-#'
-#' @details
-#' The \code{dfcount} list must contain the following elements:
-#' \itemize{
-#'   \item at_points: Time points for evaluation.
-#'   \item risk.points: Time points for risk table.
-#'   \item risk.points.label: Labels for risk table time points.
-#'   \item idv0, idv1: Individual IDs for control and treatment.
-#'   \item surv0, surv1: Survival estimates for control and treatment.
-#'   \item sig2_surv0, sig2_surv1: Variances of survival estimates.
-#'   \item idx0, idx1: Indices for control and treatment.
-#'   \item cens0, cens1: Censoring indicators.
-#'   \item riskpoints0, riskpoints1: Risk set counts for control and treatment.
-#' }
-#' Optionally, \code{quantile_results} for median annotation.
-#'
-#' The function plots survival curves, confidence intervals, risk tables, and (optionally) statistical test results and median survival.
-#'
 #' @return Invisibly returns NULL. Used for plotting side effects.
-#'
 #' @importFrom graphics plot lines legend title axis box abline par points
 #' @export
 
@@ -323,9 +316,7 @@ KM_plot_2sample_weighted_counting <- function(
 
 #' Plot Kaplan-Meier Survival Difference Curves with Subgroups and Confidence Bands
 #'
-#' Plots the difference in Kaplan-Meier survival curves between two groups (e.g., treatment vs. control),
-#' optionally including simultaneous confidence bands and subgroup curves. Also displays risk tables for
-#' the overall population and specified subgroups.
+#' Plots the difference in Kaplan-Meier survival curves between two groups, optionally including simultaneous confidence bands and subgroup curves. Also displays risk tables for the overall population and specified subgroups.
 #'
 #' @param df Data frame containing survival data.
 #' @param tte.name Name of the time-to-event column.
@@ -333,12 +324,12 @@ KM_plot_2sample_weighted_counting <- function(
 #' @param treat.name Name of the treatment group column (0/1).
 #' @param weight.name Optional name of the weights column.
 #' @param sg_labels Character vector of subgroup definitions (as logical expressions).
-#' @param ltype Line type for curves (default: \"s\").
+#' @param ltype Line type for curves (default: "s").
 #' @param lty Line style for curves (default: 1).
 #' @param draws Number of draws for resampling (default: 20).
 #' @param lwd Line width for curves (default: 2).
 #' @param sg_colors Colors for subgroup curves.
-#' @param color Color for confidence band polygon (default: \"lightgrey\").
+#' @param color Color for confidence band polygon (default: "lightgrey").
 #' @param ymax.pad, ymin.pad Padding for y-axis limits.
 #' @param taus Vector for time truncation (default: c(-Inf, Inf)).
 #' @param yseq_length Number of y-axis ticks (default: 5).
@@ -349,23 +340,8 @@ KM_plot_2sample_weighted_counting <- function(
 #' @param draws.band Number of draws for simultaneous confidence bands (default: 20).
 #' @param qtau Quantile for time range in simultaneous bands (default: 0.025).
 #' @param show_resamples Logical; whether to plot resampled curves (default: FALSE).
-#'
-#' @return (Invisible) list containing:
-#'   \item{fit_itt}{KM_diff results for the full population.}
-#'   \item{xpoints}{Time points used.}
-#'   \item{Dhat_subgroups}{Difference curves for subgroups.}
-#'   \item{s0_subgroups}{Survival curves for control in subgroups.}
-#'   \item{s1_subgroups}{Survival curves for treatment in subgroups.}
-#'   \item{rpoints}{Risk table time points.}
-#'   \item{Risk_subgroups}{Risk table counts for subgroups.}
-#'   \item{mean}{Main difference curve.}
-#'   \item{lower}{Lower confidence interval.}
-#'   \item{upper}{Upper confidence interval.}
-#'
-#' @details
-#' Uses \code{KM_diff} to compute survival differences and confidence intervals. Plots the main difference curve,
-#' confidence bands, and subgroup curves. Displays risk tables for the overall population and subgroups.
-#' Handles simultaneous confidence bands if \code{draws.band > 0}.
+#' @param modify_tau Logical; restrict time range for bands.
+#' @return (Invisible) list containing KM_diff results, time points, subgroup curves, risk tables, and confidence intervals.
 #' @importFrom graphics plot lines legend title axis box polygon matplot
 #' @export
 

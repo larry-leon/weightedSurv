@@ -15,5 +15,5 @@ validate_input(df, required_cols)
 NULL if all columns present, otherwise error.
 }
 \description{
-Validate required columns in a data frame
+Checks that all required columns are present in a data frame.
 }

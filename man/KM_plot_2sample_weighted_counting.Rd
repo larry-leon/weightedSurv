@@ -66,63 +66,63 @@ KM_plot_2sample_weighted_counting(
 )
 }
 \arguments{
-\item{dfcount}{List containing precomputed survival data (see Details).}
+\item{dfcount}{List containing precomputed survival data.}
 
-\item{show.cox}{Logical; whether to display Cox model results (default: FALSE).}
+\item{show.cox}{Logical; show Cox model results.}
 
-\item{cox.cex}{Text size for Cox model annotation.}
+\item{cox.cex}{Numeric; text size for Cox annotation.}
 
-\item{show.logrank}{Logical; whether to display log-rank test results (default: FALSE).}
+\item{show.logrank}{Logical; show log-rank test results.}
 
-\item{logrank.cex}{Text size for log-rank annotation.}
+\item{logrank.cex}{Numeric; text size for log-rank annotation.}
 
-\item{cox.eps, }{lr.eps Small values for Cox/log-rank calculations.}
+\item{cox.eps, }{lr.eps Numeric; small values for Cox/log-rank calculations.}
 
-\item{show_arm_legend}{Logical; whether to show arm legend.}
+\item{show_arm_legend}{Logical; show arm legend.}
 
 \item{arms}{Character vector of arm labels.}
 
-\item{put.legend.arms, }{put.legend.cox, put.legend.lr Legend positions.}
+\item{put.legend.arms, }{put.legend.cox, put.legend.lr Character; legend positions.}
 
-\item{stop.onerror}{Logical; whether to stop on KM curve errors.}
+\item{stop.onerror}{Logical; stop on KM curve errors.}
 
-\item{check.KM}{Logical; whether to check KM curve validity.}
+\item{check.KM}{Logical; check KM curve validity.}
 
-\item{lr.digits, }{cox.digits Number of digits for test results.}
+\item{lr.digits, }{cox.digits Integer; digits for test results.}
 
-\item{tpoints.add}{Additional time points for risk table.}
+\item{tpoints.add}{Numeric; additional time points for risk table.}
 
-\item{by.risk}{Interval for risk table time points.}
+\item{by.risk}{Numeric; interval for risk table time points.}
 
-\item{Xlab, }{Ylab Axis labels.}
+\item{Xlab, }{Ylab Character; axis labels.}
 
-\item{col.0, }{col.1 Colors for control and treatment curves.}
+\item{col.0, }{col.1 Color for control and treatment curves.}
 
-\item{show.med}{Logical; whether to annotate median survival.}
+\item{show.med}{Logical; annotate median survival.}
 
 \item{med.digits, }{med.font, med.cex, ymed.offset, xmed.fraction Median annotation settings.}
 
-\item{conf.int}{Logical; whether to plot confidence intervals.}
+\item{conf.int}{Logical; plot confidence intervals.}
 
-\item{conf_level}{Confidence level for intervals.}
+\item{conf_level}{Numeric; confidence level for intervals.}
 
-\item{choose_ylim}{Logical; whether to auto-select y-axis limits.}
+\item{choose_ylim}{Logical; auto-select y-axis limits.}
 
-\item{arm.cex}{Text size for arm legend.}
+\item{arm.cex}{Numeric; text size for arm legend.}
 
-\item{quant, }{qlabel Quantile and label for annotation.}
+\item{quant, }{qlabel Numeric/character; quantile and label for annotation.}
 
-\item{risk.cex}{Text size for risk table.}
+\item{risk.cex}{Numeric; text size for risk table.}
 
-\item{ltys, }{lwds Line types and widths for curves.}
+\item{ltys, }{lwds Integer; line types and widths for curves.}
 
-\item{censor.mark.all}{Logical; whether to mark all censored times.}
+\item{censor.mark.all}{Logical; mark all censored times.}
 
-\item{censor.cex}{Size of censor marks.}
+\item{censor.cex}{Numeric; size of censor marks.}
 
-\item{show.ticks}{Logical; whether to show axis ticks.}
+\item{show.ticks}{Logical; show axis ticks.}
 
-\item{risk.set}{Logical; whether to display risk table.}
+\item{risk.set}{Logical; display risk table.}
 
 \item{ymin, }{ymax, ymin.del, ymin2, risk_offset, risk_delta, y.risk0, y.risk1, show.Y.axis, cex_Yaxis, add.segment, risk.add, xmin, xmax, x.truncate, time.zero, prob.points Additional graphical and calculation parameters.}
 }
@@ -130,24 +130,6 @@ KM_plot_2sample_weighted_counting(
 Invisibly returns NULL. Used for plotting side effects.
 }
 \description{
-Plots Kaplan-Meier survival curves for two groups (e.g., treatment and control) using precomputed
-risk/event counts and survival estimates in counting process format. Optionally displays confidence intervals,
-risk tables, median survival annotations, and statistical test results (Cox, log-rank).
-}
-\details{
-The \code{dfcount} list must contain the following elements:
-\itemize{
-\item at_points: Time points for evaluation.
-\item risk.points: Time points for risk table.
-\item risk.points.label: Labels for risk table time points.
-\item idv0, idv1: Individual IDs for control and treatment.
-\item surv0, surv1: Survival estimates for control and treatment.
-\item sig2_surv0, sig2_surv1: Variances of survival estimates.
-\item idx0, idx1: Indices for control and treatment.
-\item cens0, cens1: Censoring indicators.
-\item riskpoints0, riskpoints1: Risk set counts for control and treatment.
-}
-Optionally, \code{quantile_results} for median annotation.
-
-The function plots survival curves, confidence intervals, risk tables, and (optionally) statistical test results and median survival.
+Plots Kaplan-Meier survival curves for two groups using precomputed risk/event counts and survival estimates.
+Optionally displays confidence intervals, risk tables, median survival annotations, and statistical test results.
 }

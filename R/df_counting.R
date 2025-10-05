@@ -1,36 +1,40 @@
-#' Creates a counting process dataset for survival analysis
+#' Weighted and stratified survival analysis with Cox and logrank tests
 #'
-#' This function prepares a dataset for survival analysis using the counting process approach,
-#' including risk set, event counts, Kaplan-Meier estimates, log-rank and Cox model results,
-#' and quantile estimates for two groups (treatment and control).
+#' Performs weighted and/or stratified survival analysis, including Cox proportional hazards model,
+#' logrank/Fleming-Harrington tests, and calculation of risk/event sets, Kaplan-Meier curves, quantiles, and variance estimates.
 #'
-#' @param df Data frame containing the survival data.
-#' @param tte.name Name of the time-to-event variable (string).
-#' @param event.name Name of the event indicator variable (string, 1=event, 0=censored).
-#' @param treat.name Name of the treatment group variable (string, 0=control, 1=treatment).
-#' @param weight.name Optional name of the weights variable (string, default NULL).
-#' @param strata.name Optional name of the stratification variable (string, default NULL).
-#' @param arms Character vector of length 2 with names for treatment and control arms.
-#' @param time.zero Time value to use as zero (default 0).
-#' @param tpoints.add Additional time points to include (numeric vector, default 0).
-#' @param by.risk Interval for risk table (default 6).
-#' @param time.zero.label Label for time zero (default 0.0).
-#' @param risk.add Additional risk points (numeric vector, default NULL).
-#' @param get.cox Logical; whether to compute Cox model results (default TRUE).
-#' @param cox.digits Number of digits for Cox model results (default 2).
-#' @param lr.digits Number of digits for log-rank results (default 2).
-#' @param cox.eps Threshold for Cox p-value formatting (default 0.001).
-#' @param lr.eps Threshold for log-rank p-value formatting (default 0.001).
-#' @param qprob Quantile probability for median/quantile estimation (default 0.5).
-#' @param rho Weighting parameter for log-rank test (default 0).
-#' @param gamma Weighting parameter for log-rank test (default 0).
-#' @param conf_level Confidence level for quantile CI (default 0.95).
-#' @param check.KM Logical; whether to check KM curve fits (default TRUE).
-#' @param stop.onerror Logical; whether to stop on error (default FALSE).
-#' @param censoring_allmarks Logical; whether to mark all censoring times (default TRUE).
-#' @return A list containing risk set, event counts, KM estimates, log-rank and Cox results, quantiles, and more.
-#' @importFrom survival Surv coxph survdiff survfit aeqSurv
-#' @importFrom stats as.formula confint pchisq pnorm quantile
+#' @param df Data frame containing survival data.
+#' @param tte.name Name of the time-to-event column in df.
+#' @param event.name Name of the event indicator column in df (1=event, 0=censored).
+#' @param treat.name Name of the treatment/group column in df (must be coded as 0=control, 1=experimental).
+#' @param weight.name Optional; name of the weights column in df.
+#' @param strata.name Optional; name of the strata column in df.
+#' @param arms Character vector of group labels (default c("treat","control")).
+#' @param time.zero Numeric; time value to use as zero (default 0).
+#' @param tpoints.add Numeric vector; additional time points to include (default c(0)).
+#' @param by.risk Numeric; interval for risk points (default 6).
+#' @param time.zero.label Numeric; label for time zero (default 0.0).
+#' @param risk.add Numeric vector; additional risk points to include (default NULL).
+#' @param get.cox Logical; whether to fit Cox model (default TRUE).
+#' @param cox.digits Integer; number of digits for Cox output (default 2).
+#' @param lr.digits Integer; number of digits for logrank output (default 2).
+#' @param cox.eps Numeric; threshold for Cox p-value formatting (default 0.001).
+#' @param lr.eps Numeric; threshold for logrank p-value formatting (default 0.001).
+#' @param verbose Logical; print warnings/errors (default FALSE).
+#' @param qprob Numeric; quantile probability for KM quantile table (default 0.5).
+#' @param scheme Character; weighting scheme for logrank/FH test (default \"fh\").
+#' @param scheme_params List; parameters for weighting scheme (default list(rho = 0, gamma = 0)).
+#' @param conf_level Numeric; confidence level for quantiles (default 0.95).
+#' @param check.KM Logical; check KM curve fits (default TRUE).
+#' @param check.seKM Logical; check KM standard error fits (default FALSE).
+#' @param draws Integer; number of draws for variance estimation (default 0).
+#' @param seedstart Integer; random seed for draws (default 8316951).
+#' @param stop.onerror Logical; stop on error (default FALSE).
+#' @param censoring_allmarks Logical; if FALSE, remove events from censored (default TRUE).
+#'
+#' @return A list containing Cox model results, logrank results, risk/event sets, KM curves, quantiles, variance estimates, and diagnostic checks.
+#'
+#' @importFrom survival Surv coxph survfit survdiff
 #' @export
 
 df_counting <- function(df, tte.name, event.name, treat.name, weight.name=NULL, strata.name = NULL, arms=c("treat","control"),

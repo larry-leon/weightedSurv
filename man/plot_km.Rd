@@ -6,6 +6,22 @@
 \usage{
 plot_km(df, tte.name, event.name, treat.name, weights = NULL, ...)
 }
+\arguments{
+\item{df}{Data frame containing survival data.}
+
+\item{tte.name}{Name of time-to-event column.}
+
+\item{event.name}{Name of event indicator column.}
+
+\item{treat.name}{Name of treatment/group column.}
+
+\item{weights}{Optional; name of weights column.}
+
+\item{...}{Additional arguments passed to plot().}
+}
+\value{
+Kaplan-Meier fit object (invisible).
+}
 \description{
-Plot Kaplan-Meier curves
+Plots Kaplan-Meier survival curves for groups in the data.
 }

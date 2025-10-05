@@ -7,17 +7,21 @@
 calculate_risk_event_counts(U, D, W, at_points, draws = 0, seedstart = 816951)
 }
 \arguments{
-\item{U}{Numeric vector of times for group}
+\item{U}{Numeric vector of times for group.}
 
-\item{D}{Numeric vector of event indicators for group}
+\item{D}{Numeric vector of event indicators for group.}
 
-\item{W}{Numeric vector of weights for group}
+\item{W}{Numeric vector of weights for group.}
 
-\item{at_points}{Numeric vector of time points}
+\item{at_points}{Numeric vector of time points.}
+
+\item{draws}{Number of draws for variance estimation (default 0).}
+
+\item{seedstart}{Random seed for draws (default 816951).}
 }
 \value{
-List with ybar (risk set counts), nbar (event counts)
+List with ybar (risk set counts), nbar (event counts), sig2w_multiplier (variance term).
 }
 \description{
-Calculate risk set and event counts at time points
+Calculates risk set and event counts for a group at specified time points, with variance estimation.
 }

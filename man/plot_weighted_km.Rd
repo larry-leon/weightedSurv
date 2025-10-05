@@ -2,10 +2,18 @@
 % Please edit documentation in R/df_counting_helpers.R
 \name{plot_weighted_km}
 \alias{plot_weighted_km}
-\title{Plot weighted KM using custom function}
+\title{Plot weighted Kaplan-Meier curves}
 \usage{
 plot_weighted_km(dfcount, ...)
 }
+\arguments{
+\item{dfcount}{Result object from df_counting.}
+
+\item{...}{Additional arguments passed to KM_plot_2sample_weighted_counting.}
+}
+\value{
+None. Plots the curves.
+}
 \description{
-Plot weighted KM using custom function
+Plots weighted Kaplan-Meier curves using a custom function.
 }

@@ -14,18 +14,18 @@ add_median_annotation(
 )
 }
 \arguments{
-\item{medians_df}{Data frame with quantile results}
+\item{medians_df}{Data frame with quantile results.}
 
-\item{med.digits}{Digits for median}
+\item{med.digits}{Integer; digits for median.}
 
-\item{med.cex}{Text size for median}
+\item{med.cex}{Numeric; text size for median.}
 
-\item{med.font}{Font for median}
+\item{med.font}{Integer; font for median.}
 
-\item{xmed.fraction}{X position fraction}
+\item{xmed.fraction}{Numeric; x position fraction.}
 
-\item{ymed.offset}{Y offset}
+\item{ymed.offset}{Numeric; y offset.}
 }
 \description{
-Add median annotation to KM plot
+Adds median survival annotation to a Kaplan-Meier plot.
 }

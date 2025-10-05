@@ -1,5 +1,8 @@
 
 #' Format p-value for display
+#'
+#' Formats a p-value for display, showing "<eps" for small values.
+#'
 #' @param pval Numeric p-value.
 #' @param eps Threshold for small p-values.
 #' @param digits Number of digits to display.
@@ -13,6 +16,9 @@ format_pval <- function(pval, eps = 0.001, digits = 3) {
 }
 
 #' Validate required columns in a data frame
+#'
+#' Checks that all required columns are present in a data frame.
+#'
 #' @param df Data frame to check.
 #' @param required_cols Character vector of required column names.
 #' @return NULL if all columns present, otherwise error.
@@ -25,8 +31,10 @@ validate_input <- function(df, required_cols) {
 }
 
 
-# Weighted counting process: number of events up to time x
 #' Weighted counting process
+#'
+#' Computes the weighted count of events up to a specified time.
+#'
 #' @param x Time point.
 #' @param y Vector of event/censoring times.
 #' @param w Weights (default 1).
@@ -37,8 +45,10 @@ count_weighted <- function(x, y, w = rep(1, length(y))) {
   sum(w * (y <= x))
 }
 
-# Weighted risk set: number at risk at time x
 #' Weighted risk set
+#'
+#' Computes the weighted number at risk at a specified time.
+#'
 #' @param x Time point.
 #' @param y Vector of event/censoring times.
 #' @param w Weights (default 1).
@@ -50,6 +60,9 @@ risk_weighted <- function(x, y, w = rep(1, length(y))) {
 }
 
 #' Kaplan-Meier quantile calculation
+#'
+#' Calculates the quantile time for a Kaplan-Meier curve.
+#'
 #' @param time_points Vector of time points.
 #' @param survival_probs Vector of survival probabilities.
 #' @param qprob Quantile probability (default 0.5).
@@ -74,6 +87,9 @@ kmq_calculations <- function(time_points, survival_probs, qprob = 0.5, type = "m
 }
 
 #' Kaplan-Meier quantile and confidence interval
+#'
+#' Calculates the quantile and confidence interval for a Kaplan-Meier curve.
+#'
 #' @param time_points Vector of time points.
 #' @param survival_probs Vector of survival probabilities.
 #' @param se_probs Standard errors of survival probabilities.
@@ -103,6 +119,9 @@ km_quantile <- function(time_points, survival_probs, se_probs = NULL, qprob = 0.
 }
 
 #' Table of KM quantiles for two groups
+#'
+#' Returns a data frame of quantiles and confidence intervals for two groups.
+#'
 #' @param time_points Vector of time points.
 #' @param surv0 Survival probabilities for group 0.
 #' @param se0 Standard errors for group 0.
@@ -243,6 +262,7 @@ wlr_dhat_estimates <- function(dfcounting,
 #' @param ybar Vector of risk set sizes at each time point.
 #' @param nbar Vector of event counts at each time point.
 #' @param sig2w_multiplier Optional vector for variance calculation. If NULL, calculated internally.
+#' @return List with survival estimates and variances.
 #' @export
 
 KM_estimates <- function(ybar, nbar, sig2w_multiplier = NULL){
@@ -262,16 +282,7 @@ KM_estimates <- function(ybar, nbar, sig2w_multiplier = NULL){
 #'
 #' @param U Vector of observed times (e.g., time-to-event).
 #' @param at.points Vector of time points at which to evaluate events and risk.
-#'
-#' @return A list with elements:
-#'   \item{event_mat}{Matrix indicating if event occurred by each time point.}
-#'   \item{risk_mat}{Matrix indicating if subject is at risk at each time point.}
-#'
-#' @examples
-#' U <- c(1, 2, 3)
-#' at.points <- c(1, 2, 3)
-#' get_event_risk_matrices(U, at.points)
-#'
+#' @return A list with event and risk matrices.
 #' @export
 
 get_event_risk_matrices <- function(U, at.points) {
@@ -293,9 +304,7 @@ get_event_risk_matrices <- function(U, at.points) {
 #' @param draws.band Number of resampling draws.
 #' @param surv Vector of survival estimates.
 #' @param G_draws Matrix of random draws for resampling.
-#'
 #' @return Matrix of resampled survival curves.
-#'
 #' @export
 
 resampling_survival <- function(U, W, D, at.points, draws.band, surv, G_draws) {
@@ -311,7 +320,7 @@ resampling_survival <- function(U, W, D, at.points, draws.band, surv, G_draws) {
 
 #' KM difference between groups
 #'
-#' Calculates the difference in KM curves between two groups.
+#' Calculates the difference in KM curves between two groups, with confidence intervals and optional resampling bands.
 #'
 #' @param df Data frame with survival data.
 #' @param tte.name Name of time-to-event variable.
@@ -322,7 +331,13 @@ resampling_survival <- function(U, W, D, at.points, draws.band, surv, G_draws) {
 #' @param alpha Significance level.
 #' @param seedstart Random seed.
 #' @param draws Number of resampling draws.
-#' @return Data frame with KM differences.
+#' @param risk.points Risk points for calculation.
+#' @param draws.band Number of draws for simultaneous bands.
+#' @param tau.seq Step size for tau sequence.
+#' @param qtau Quantile for tau range.
+#' @param show_resamples Logical; whether to plot resamples.
+#' @param modify_tau Logical; restrict time range for bands.
+#' @return Data frame with KM differences and confidence intervals.
 #' @importFrom survival Surv
 #' @importFrom stats quantile
 #' @importFrom graphics matplot

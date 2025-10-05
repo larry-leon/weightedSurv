@@ -7,12 +7,15 @@
 check_km_curve(S.KM, group_name = "Group", stop_on_error = TRUE)
 }
 \arguments{
-\item{S.KM}{Survival probabilities}
+\item{S.KM}{Numeric vector of survival probabilities.}
 
-\item{group_name}{Name of the group}
+\item{group_name}{Character; name of the group.}
 
-\item{stop_on_error}{Whether to stop on error (default TRUE)}
+\item{stop_on_error}{Logical; whether to stop on error (default TRUE).}
+}
+\value{
+None. Stops or warns if invalid.
 }
 \description{
-Check KM curve for validity
+Checks that a Kaplan-Meier curve is valid (values in \link{0,1}, non-increasing).
 }

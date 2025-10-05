@@ -18,7 +18,7 @@ find_cox_root(time, delta, z, w_hat, wt_rg)
 \item{wt_rg}{Numeric vector of rho-gamma weights.}
 }
 \value{
-Numeric value of the root (estimate).
+List with root and additional information, or NA if not found.
 }
 \description{
 Finds the root of the Cox model score equation for weighted log-rank statistics.

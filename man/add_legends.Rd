@@ -23,36 +23,36 @@ add_legends(
 )
 }
 \arguments{
-\item{dfcount}{List with results}
+\item{dfcount}{List with results.}
 
-\item{show.cox}{Show Cox legend}
+\item{show.cox}{Logical; show Cox legend.}
 
-\item{cox.cex}{Cox legend size}
+\item{cox.cex}{Numeric; Cox legend size.}
 
-\item{put.legend.cox}{Cox legend position}
+\item{put.legend.cox}{Character; Cox legend position.}
 
-\item{show.logrank}{Show logrank legend}
+\item{show.logrank}{Logical; show logrank legend.}
 
-\item{logrank.cex}{Logrank legend size}
+\item{logrank.cex}{Numeric; logrank legend size.}
 
-\item{put.legend.lr}{Logrank legend position}
+\item{put.legend.lr}{Character; logrank legend position.}
 
-\item{show_arm_legend}{Show arm legend}
+\item{show_arm_legend}{Logical; show arm legend.}
 
-\item{arms}{Arm labels}
+\item{arms}{Character vector of arm labels.}
 
-\item{col.1}{Color for group 1}
+\item{col.1}{Color for group 1.}
 
-\item{col.0}{Color for group 0}
+\item{col.0}{Color for group 0.}
 
-\item{ltys}{Line types}
+\item{ltys}{Line types.}
 
-\item{lwds}{Line widths}
+\item{lwds}{Line widths.}
 
-\item{arm.cex}{Arm legend size}
+\item{arm.cex}{Numeric; arm legend size.}
 
-\item{put.legend.arms}{Arm legend position}
+\item{put.legend.arms}{Character; arm legend position.}
 }
 \description{
-Add legends to KM plot
+Adds legends for Cox model, log-rank test, and arms to a Kaplan-Meier plot.
 }

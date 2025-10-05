@@ -6,6 +6,12 @@
 \usage{
 check_results(dfcount)
 }
+\arguments{
+\item{dfcount}{Result object from df_counting.}
+}
+\value{
+None. Prints summary statistics.
+}
 \description{
-Checking results
+Prints summary statistics for logrank and Cox model results from dfcounting.
 }

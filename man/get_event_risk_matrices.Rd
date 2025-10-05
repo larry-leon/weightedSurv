@@ -12,16 +12,8 @@ get_event_risk_matrices(U, at.points)
 \item{at.points}{Vector of time points at which to evaluate events and risk.}
 }
 \value{
-A list with elements:
-\item{event_mat}{Matrix indicating if event occurred by each time point.}
-\item{risk_mat}{Matrix indicating if subject is at risk at each time point.}
+A list with event and risk matrices.
 }
 \description{
 Constructs matrices indicating event and risk status for each subject at specified time points.
-}
-\examples{
-U <- c(1, 2, 3)
-at.points <- c(1, 2, 3)
-get_event_risk_matrices(U, at.points)
-
 }

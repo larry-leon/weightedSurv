@@ -7,15 +7,15 @@
 get_riskpoints(ybar, risk_points, at_points)
 }
 \arguments{
-\item{ybar}{Numeric vector of risk set counts}
+\item{ybar}{Numeric vector of risk set counts.}
 
-\item{risk_points}{Numeric vector of risk points}
+\item{risk_points}{Numeric vector of risk points.}
 
-\item{at_points}{Numeric vector of time points}
+\item{at_points}{Numeric vector of time points.}
 }
 \value{
-Numeric vector of risk set counts at risk points
+Numeric vector of risk set counts at risk points.
 }
 \description{
-Get risk set counts at specified risk points
+Returns risk set counts at specified risk points.
 }

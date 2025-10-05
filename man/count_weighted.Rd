@@ -17,5 +17,5 @@ count_weighted(x, y, w = rep(1, length(y)))
 Weighted count of events up to time x.
 }
 \description{
-Weighted counting process
+Computes the weighted count of events up to a specified time.
 }

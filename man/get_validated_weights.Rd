@@ -14,10 +14,16 @@ get_validated_weights(
 \arguments{
 \item{df_weights}{Data frame containing weights and related data.}
 
+\item{scheme}{Character string specifying the weighting scheme.}
+
+\item{scheme_params}{List of parameters for the scheme.}
+
+\item{details}{Logical; if TRUE, returns detailed output.}
+
 \item{...}{Additional arguments.}
 }
 \value{
-Data frame with validated weights.
+Numeric vector or list of validated weights.
 }
 \description{
 Validates and returns weights for a data frame according to specified schemes.

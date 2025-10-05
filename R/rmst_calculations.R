@@ -1,22 +1,25 @@
-
 #' Cumulative RMST bands for survival curves
 #'
-#' Calculates cumulative RMST and confidence bands for survival curves using resampling.
+#' Calculates cumulative Restricted Mean Survival Time (RMST) and confidence bands for survival curves using resampling.
+#' Plots the cumulative RMST curve, pointwise confidence intervals, and simultaneous confidence bands.
 #'
 #' @param df Data frame containing survival data.
-#' @param fit Survival fit object.
-#' @param tte.name Name of time-to-event variable.
-#' @param event.name Name of event indicator variable.
-#' @param treat.name Name of treatment group variable.
-#' @param weight.name Optional name of weights variable.
-#' @param draws_sb Number of resampling draws for bands (default: 1000).
+#' @param fit Survival fit object (output from KM_diff).
+#' @param tte.name Name of time-to-event variable in \code{df}.
+#' @param event.name Name of event indicator variable in \code{df}.
+#' @param treat.name Name of treatment group variable in \code{df}.
+#' @param weight.name Optional name of weights variable in \code{df}.
+#' @param draws_sb Number of resampling draws for simultaneous bands (default: 1000).
 #' @param xlab Label for x-axis (default: "months").
 #' @param ylim_pad Padding for y-axis limits (default: 0.5).
-#' @return List containing cumulative RMST estimates and confidence bands.
+#' @param rmst_max_legend Position for RMST legend (default: "left").
+#' @param rmst_max_cex Text size for RMST legend (default: 0.7).
+#'
+#' @return List containing cumulative RMST estimates, pointwise and simultaneous confidence bands, and RMST at maximum time.
+#'
 #' @importFrom stats quantile rnorm
 #' @importFrom utils head tail
-#' @importFrom graphics polygon
-
+#' @importFrom graphics polygon lines legend abline plot
 #' @export
 
 cumulative_rmst_bands <- function(df, fit, tte.name, event.name, treat.name, weight.name = NULL, draws_sb = 1000, xlab="months", ylim_pad = 0.5,

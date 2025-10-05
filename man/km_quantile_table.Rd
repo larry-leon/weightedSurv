@@ -39,5 +39,5 @@ km_quantile_table(
 Data frame of quantiles and CIs for each group.
 }
 \description{
-Table of KM quantiles for two groups
+Returns a data frame of quantiles and confidence intervals for two groups.
 }

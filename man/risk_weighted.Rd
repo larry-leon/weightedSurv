@@ -17,5 +17,5 @@ risk_weighted(x, y, w = rep(1, length(y)))
 Weighted number at risk at time x.
 }
 \description{
-Weighted risk set
+Computes the weighted number at risk at a specified time.
 }

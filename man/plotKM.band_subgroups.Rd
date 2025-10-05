@@ -62,7 +62,7 @@ plotKM.band_subgroups(
 
 \item{sg_labels}{Character vector of subgroup definitions (as logical expressions).}
 
-\item{ltype}{Line type for curves (default: \"s\").}
+\item{ltype}{Line type for curves (default: "s").}
 
 \item{lty}{Line style for curves (default: 1).}
 
@@ -72,7 +72,7 @@ plotKM.band_subgroups(
 
 \item{sg_colors}{Colors for subgroup curves.}
 
-\item{color}{Color for confidence band polygon (default: \"lightgrey\").}
+\item{color}{Color for confidence band polygon (default: "lightgrey").}
 
 \item{ymax.pad, }{ymin.pad Padding for y-axis limits.}
 
@@ -93,27 +93,12 @@ plotKM.band_subgroups(
 \item{qtau}{Quantile for time range in simultaneous bands (default: 0.025).}
 
 \item{show_resamples}{Logical; whether to plot resampled curves (default: FALSE).}
+
+\item{modify_tau}{Logical; restrict time range for bands.}
 }
 \value{
-(Invisible) list containing:
-\item{fit_itt}{KM_diff results for the full population.}
-\item{xpoints}{Time points used.}
-\item{Dhat_subgroups}{Difference curves for subgroups.}
-\item{s0_subgroups}{Survival curves for control in subgroups.}
-\item{s1_subgroups}{Survival curves for treatment in subgroups.}
-\item{rpoints}{Risk table time points.}
-\item{Risk_subgroups}{Risk table counts for subgroups.}
-\item{mean}{Main difference curve.}
-\item{lower}{Lower confidence interval.}
-\item{upper}{Upper confidence interval.}
+(Invisible) list containing KM_diff results, time points, subgroup curves, risk tables, and confidence intervals.
 }
 \description{
-Plots the difference in Kaplan-Meier survival curves between two groups (e.g., treatment vs. control),
-optionally including simultaneous confidence bands and subgroup curves. Also displays risk tables for
-the overall population and specified subgroups.
-}
-\details{
-Uses \code{KM_diff} to compute survival differences and confidence intervals. Plots the main difference curve,
-confidence bands, and subgroup curves. Displays risk tables for the overall population and subgroups.
-Handles simultaneous confidence bands if \code{draws.band > 0}.
+Plots the difference in Kaplan-Meier survival curves between two groups, optionally including simultaneous confidence bands and subgroup curves. Also displays risk tables for the overall population and specified subgroups.
 }

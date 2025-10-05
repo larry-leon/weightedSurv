@@ -13,6 +13,9 @@ KM_estimates(ybar, nbar, sig2w_multiplier = NULL)
 
 \item{sig2w_multiplier}{Optional vector for variance calculation. If NULL, calculated internally.}
 }
+\value{
+List with survival estimates and variances.
+}
 \description{
 Computes Kaplan-Meier survival estimates and their variances given risk and event counts.
 }

@@ -21,25 +21,30 @@ cumulative_rmst_bands(
 \arguments{
 \item{df}{Data frame containing survival data.}
 
-\item{fit}{Survival fit object.}
+\item{fit}{Survival fit object (output from KM_diff).}
 
-\item{tte.name}{Name of time-to-event variable.}
+\item{tte.name}{Name of time-to-event variable in \code{df}.}
 
-\item{event.name}{Name of event indicator variable.}
+\item{event.name}{Name of event indicator variable in \code{df}.}
 
-\item{treat.name}{Name of treatment group variable.}
+\item{treat.name}{Name of treatment group variable in \code{df}.}
 
-\item{weight.name}{Optional name of weights variable.}
+\item{weight.name}{Optional name of weights variable in \code{df}.}
 
-\item{draws_sb}{Number of resampling draws for bands (default: 1000).}
+\item{draws_sb}{Number of resampling draws for simultaneous bands (default: 1000).}
 
 \item{xlab}{Label for x-axis (default: "months").}
 
 \item{ylim_pad}{Padding for y-axis limits (default: 0.5).}
+
+\item{rmst_max_legend}{Position for RMST legend (default: "left").}
+
+\item{rmst_max_cex}{Text size for RMST legend (default: 0.7).}
 }
 \value{
-List containing cumulative RMST estimates and confidence bands.
+List containing cumulative RMST estimates, pointwise and simultaneous confidence bands, and RMST at maximum time.
 }
 \description{
-Calculates cumulative RMST and confidence bands for survival curves using resampling.
+Calculates cumulative Restricted Mean Survival Time (RMST) and confidence bands for survival curves using resampling.
+Plots the cumulative RMST curve, pointwise confidence intervals, and simultaneous confidence bands.
 }

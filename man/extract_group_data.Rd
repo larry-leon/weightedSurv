@@ -7,19 +7,19 @@
 extract_group_data(time, delta, wgt, z, group = 1)
 }
 \arguments{
-\item{time}{Numeric vector of times}
+\item{time}{Numeric vector of times.}
 
-\item{delta}{Numeric vector of event indicators (1=event, 0=censored)}
+\item{delta}{Numeric vector of event indicators (1=event, 0=censored).}
 
-\item{wgt}{Numeric vector of weights}
+\item{wgt}{Numeric vector of weights.}
 
-\item{z}{Numeric vector of group indicators}
+\item{z}{Numeric vector of group indicators.}
 
-\item{group}{Value of group to extract (default 1)}
+\item{group}{Value of group to extract (default 1).}
 }
 \value{
-List with U (times), D (events), W (weights)
+List with U (times), D (events), W (weights).
 }
 \description{
-Extract time, event, and weight data for a group
+Extracts time, event, and weight vectors for a specified group.
 }

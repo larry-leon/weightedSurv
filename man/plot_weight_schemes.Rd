@@ -43,10 +43,6 @@ plot_weight_schemes(
 \item{transform_fh}{Logical; whether to transform FH weights (default: FALSE).}
 
 \item{rescheme_fhexp2}{Logical; whether to rescheme FHexp2 and custom_time (default: TRUE).}
-
-\item{time}{is calculated with df_weights call}
-
-\item{weight_trans}{is a transformed version of fh_exp2 to display with MB}
 }
 \value{
 A ggplot object showing the weight schemes over time.

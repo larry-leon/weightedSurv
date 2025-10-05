@@ -40,10 +40,22 @@ KM_diff(
 \item{seedstart}{Random seed.}
 
 \item{draws}{Number of resampling draws.}
+
+\item{risk.points}{Risk points for calculation.}
+
+\item{draws.band}{Number of draws for simultaneous bands.}
+
+\item{tau.seq}{Step size for tau sequence.}
+
+\item{qtau}{Quantile for tau range.}
+
+\item{show_resamples}{Logical; whether to plot resamples.}
+
+\item{modify_tau}{Logical; restrict time range for bands.}
 }
 \value{
-Data frame with KM differences.
+Data frame with KM differences and confidence intervals.
 }
 \description{
-Calculates the difference in KM curves between two groups.
+Calculates the difference in KM curves between two groups, with confidence intervals and optional resampling bands.
 }

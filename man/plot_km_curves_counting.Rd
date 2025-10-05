@@ -36,58 +36,58 @@ plot_km_curves_counting(
 )
 }
 \arguments{
-\item{at_points}{Time points for plotting}
+\item{at_points}{Numeric vector of time points for plotting.}
 
-\item{S0.KM}{Survival probabilities for group 0}
+\item{S0.KM}{Numeric vector of survival probabilities for group 0.}
 
-\item{idx0}{Indices for censoring in group 0}
+\item{idx0}{Indices for censoring in group 0.}
 
-\item{idv0}{Indices for events in group 0}
+\item{idv0}{Indices for events in group 0.}
 
-\item{S1.KM}{Survival probabilities for group 1}
+\item{S1.KM}{Numeric vector of survival probabilities for group 1.}
 
-\item{idx1}{Indices for censoring in group 1}
+\item{idx1}{Indices for censoring in group 1.}
 
-\item{idv1}{Indices for events in group 1}
+\item{idv1}{Indices for events in group 1.}
 
-\item{col.0}{Color for group 0}
+\item{col.0}{Color for group 0.}
 
-\item{col.1}{Color for group 1}
+\item{col.1}{Color for group 1.}
 
-\item{ltys}{Line types for groups}
+\item{ltys}{Line types for groups.}
 
-\item{lwds}{Line widths for groups}
+\item{lwds}{Line widths for groups.}
 
-\item{Xlab}{X-axis label}
+\item{Xlab}{X-axis label.}
 
-\item{Ylab}{Y-axis label}
+\item{Ylab}{Y-axis label.}
 
-\item{ylim}{Y-axis limits}
+\item{ylim}{Y-axis limits.}
 
-\item{xlim}{X-axis limits}
+\item{xlim}{X-axis limits.}
 
-\item{show.ticks}{Show censoring marks (default FALSE)}
+\item{show.ticks}{Logical; show censoring marks (default FALSE).}
 
-\item{cens0}{Censoring times for group 0}
+\item{cens0}{Numeric vector of censoring times for group 0.}
 
-\item{risk.points}{Risk time points}
+\item{risk.points}{Numeric vector of risk time points.}
 
-\item{risk.points.label}{Labels for risk time points}
+\item{risk.points.label}{Character vector of labels for risk time points.}
 
-\item{cens1}{Censoring times for group 1}
+\item{cens1}{Numeric vector of censoring times for group 1.}
 
-\item{se0.KM}{Standard errors for group 0}
+\item{se0.KM}{Numeric vector of standard errors for group 0.}
 
-\item{se1.KM}{Standard errors for group 1}
+\item{se1.KM}{Numeric vector of standard errors for group 1.}
 
-\item{conf.int}{Show confidence intervals (default FALSE)}
+\item{conf.int}{Logical; show confidence intervals (default FALSE).}
 
-\item{conf_level}{Confidence level (default 0.95)}
+\item{conf_level}{Confidence level (default 0.95).}
 
-\item{censor.cex}{Censoring mark size (default 1.0)}
+\item{censor.cex}{Numeric; censoring mark size (default 1.0).}
 
-\item{...}{Additional arguments to plot}
+\item{...}{Additional arguments to plot.}
 }
 \description{
-Plot KM curves for two groups with optional confidence intervals and censoring marks
+Plots Kaplan-Meier survival curves for two groups, with options for confidence intervals and censoring marks.
 }

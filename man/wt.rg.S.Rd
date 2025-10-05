@@ -19,6 +19,34 @@ wt.rg.S(
   details = FALSE
 )
 }
+\arguments{
+\item{S}{Numeric vector of survival probabilities.}
+
+\item{scheme}{Character string specifying the weighting scheme. One of 'fh', 'schemper', 'XO', 'MB', 'custom_time', 'fh_exp1', 'fh_exp2'.}
+
+\item{rho}{Numeric; rho parameter for FH weights.}
+
+\item{gamma}{Numeric; gamma parameter for FH weights.}
+
+\item{Scensor}{Numeric vector; censoring KM curve for Schemper weights.}
+
+\item{Ybar}{Numeric vector; risk set sizes for XO weights.}
+
+\item{tpoints}{Numeric vector; time points for MB/custom_time weights.}
+
+\item{t.tau}{Numeric; cutoff time for custom_time weights.}
+
+\item{w0.tau}{Numeric; weight before t.tau for custom_time weights.}
+
+\item{w1.tau}{Numeric; weight after t.tau for custom_time weights.}
+
+\item{mb_tstar}{Numeric; cutoff time for MB weights.}
+
+\item{details}{Logical; if TRUE, returns detailed output.}
+}
+\value{
+Numeric vector of weights, or list if details=TRUE.
+}
 \description{
-Compute Time-Dependent Weights for Survival Analysis
+Calculates time-dependent weights for survival analysis according to various schemes (Fleming-Harrington, Schemper, XO, MB, custom).
 }

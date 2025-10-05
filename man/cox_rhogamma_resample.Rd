@@ -13,38 +13,29 @@ cox_rhogamma_resample(
   G1.draws = NULL,
   G0.draws = NULL,
   draws = 100,
-  seedstart = 8316951,
-  workers = NULL
+  seedstart = 8316951
 )
 }
 \arguments{
-\item{G1.draws, }{G0.draws Optional: pre-generated random draws for groups}
+\item{fit_rhogamma}{List with fitted Cox model results.}
 
-\item{draws}{Number of resampling iterations}
+\item{i_bhat}{Information at estimated beta.}
 
-\item{workers}{Number of parallel workers}
+\item{K_wt_rg}{Weights at estimated beta.}
 
-\item{bhat}{Estimated coefficient}
+\item{i_zero}{Information at beta=0.}
 
-\item{time}{Event/censoring times}
+\item{K_zero}{Weights at beta=0.}
 
-\item{delta}{Event indicator}
+\item{G1.draws, }{G0.draws Optional: pre-generated random draws for groups.}
 
-\item{z}{Treatment group indicator (0/1)}
+\item{draws}{Number of resampling iterations (default: 100).}
 
-\item{w_hat}{Subjects' weighting (eg. propensity-scores)}
-
-\item{rho, }{gamma Weighting parameters}
-
-\item{t.tau, }{w0.tau, w1.tau Optional: custom weights}
-
-\item{seed.value}{Optional: random seed}
-
-\item{parallel}{Logical: use parallelization? (default FALSE)}
+\item{seedstart}{Random seed for reproducibility (default: 8316951).}
 }
 \value{
-List with resampling results
+List with resampling results (score, beta, standard error, etc.).
 }
 \description{
-Resampling for Weighted Cox Model (rho, gamma)
+Performs resampling to estimate uncertainty for the weighted Cox model (rho, gamma).
 }

@@ -1,5 +1,10 @@
 # ---- Utility Functions ----
 #' Safe execution wrapper
+#'
+#' Executes an R expression safely, returning NULL and printing an error message if an error occurs.
+#'
+#' @param expr An R expression to evaluate.
+#' @return The result of expr, or NULL if an error occurs.
 #' @export
 
 safe_run <- function(expr) {
@@ -10,7 +15,28 @@ safe_run <- function(expr) {
 }
 
 
-#' Get df_counting
+#' Get df_counting results
+#'
+#' Wrapper for df_counting, safely executes and returns results for survival analysis.
+#'
+#' @param df Data frame containing survival data.
+#' @param tte.name Name of time-to-event column.
+#' @param event.name Name of event indicator column.
+#' @param treat.name Name of treatment/group column.
+#' @param arms Vector of treatment arms/groups.
+#' @param by.risk Risk interval (default 12).
+#' @param cox.digits Digits for Cox model output (default 3).
+#' @param lr.digits Digits for logrank output (default 3).
+#' @param qprob Quantile probability (default 0.50).
+#' @param strata.name Name of strata column (optional).
+#' @param weight.name Name of weights column (optional).
+#' @param check.KM Logical; check KM curves (default TRUE).
+#' @param scheme Scheme for analysis (default "fh").
+#' @param scheme_params List of scheme parameters (default list(rho = 0, gamma = 0)).
+#' @param draws Number of draws for variance estimation (default 0).
+#' @param seedstart Random seed (default 8316951).
+#' @param check.seKM Logical; check KM standard error (default FALSE).
+#' @return Result from df_counting or NULL if error.
 #' @export
 
 get_dfcounting <- function(df, tte.name, event.name, treat.name, arms, by.risk=12, cox.digits=3, lr.digits=3,
@@ -29,6 +55,11 @@ get_dfcounting <- function(df, tte.name, event.name, treat.name, arms, by.risk=1
 
 
 #' Checking results
+#'
+#' Prints summary statistics for logrank and Cox model results from dfcounting.
+#'
+#' @param dfcount Result object from df_counting.
+#' @return None. Prints summary statistics.
 #' @export
 
 check_results <- function(dfcount){
@@ -39,6 +70,17 @@ check_results <- function(dfcount){
 
 
 #' Plot Kaplan-Meier curves
+#'
+#' Plots Kaplan-Meier survival curves for groups in the data.
+#'
+#' @param df Data frame containing survival data.
+#' @param tte.name Name of time-to-event column.
+#' @param event.name Name of event indicator column.
+#' @param treat.name Name of treatment/group column.
+#' @param weights Optional; name of weights column.
+#' @param ... Additional arguments passed to plot().
+#' @importFrom survival Surv survfit
+#' @return Kaplan-Meier fit object (invisible).
 #' @export
 
 plot_km <- function(df, tte.name, event.name, treat.name, weights=NULL, ...) {
@@ -55,7 +97,13 @@ plot_km <- function(df, tte.name, event.name, treat.name, weights=NULL, ...) {
   })
 }
 
-#' Plot weighted KM using custom function
+#' Plot weighted Kaplan-Meier curves
+#'
+#' Plots weighted Kaplan-Meier curves using a custom function.
+#'
+#' @param dfcount Result object from df_counting.
+#' @param ... Additional arguments passed to KM_plot_2sample_weighted_counting.
+#' @return None. Plots the curves.
 #' @export
 
 plot_weighted_km <- function(dfcount, ...) {
@@ -66,15 +114,16 @@ plot_weighted_km <- function(dfcount, ...) {
 }
 
 
-# Helper: Extract Group Data
 #' Extract time, event, and weight data for a group
 #'
-#' @param time Numeric vector of times
-#' @param delta Numeric vector of event indicators (1=event, 0=censored)
-#' @param wgt Numeric vector of weights
-#' @param z Numeric vector of group indicators
-#' @param group Value of group to extract (default 1)
-#' @return List with U (times), D (events), W (weights)
+#' Extracts time, event, and weight vectors for a specified group.
+#'
+#' @param time Numeric vector of times.
+#' @param delta Numeric vector of event indicators (1=event, 0=censored).
+#' @param wgt Numeric vector of weights.
+#' @param z Numeric vector of group indicators.
+#' @param group Value of group to extract (default 1).
+#' @return List with U (times), D (events), W (weights).
 #' @export
 
 extract_group_data <- function(time, delta, wgt, z, group = 1) {
@@ -85,14 +134,17 @@ extract_group_data <- function(time, delta, wgt, z, group = 1) {
   )
 }
 
-# Helper: Calculate Risk and Event Counts
 #' Calculate risk set and event counts at time points
 #'
-#' @param U Numeric vector of times for group
-#' @param D Numeric vector of event indicators for group
-#' @param W Numeric vector of weights for group
-#' @param at_points Numeric vector of time points
-#' @return List with ybar (risk set counts), nbar (event counts)
+#' Calculates risk set and event counts for a group at specified time points, with variance estimation.
+#'
+#' @param U Numeric vector of times for group.
+#' @param D Numeric vector of event indicators for group.
+#' @param W Numeric vector of weights for group.
+#' @param at_points Numeric vector of time points.
+#' @param draws Number of draws for variance estimation (default 0).
+#' @param seedstart Random seed for draws (default 816951).
+#' @return List with ybar (risk set counts), nbar (event counts), sig2w_multiplier (variance term).
 #' @export
 
 calculate_risk_event_counts <- function(U, D, W, at_points, draws = 0, seedstart = 816951) {
@@ -138,16 +190,17 @@ calculate_risk_event_counts <- function(U, D, W, at_points, draws = 0, seedstart
   list(ybar = ybar, nbar = nbar, sig2w_multiplier = sig2w_multiplier)
 }
 
-# Helper : Get Censoring and Event Times
 #' Get censoring and event times and their indices
 #'
-#' @param time Numeric vector of times
-#' @param delta Numeric vector of event indicators
-#' @param z Numeric vector of group indicators
-#' @param group Value of group to extract
-#' @param censoring_allmarks Logical; if FALSE, remove events from censored
-#' @param at_points Numeric vector of time points
-#' @return List with cens (censored times), ev (event times), idx_cens, idx_ev, idx_ev_full
+#' Extracts censoring and event times and their indices for a group at specified time points.
+#'
+#' @param time Numeric vector of times.
+#' @param delta Numeric vector of event indicators.
+#' @param z Numeric vector of group indicators.
+#' @param group Value of group to extract.
+#' @param censoring_allmarks Logical; if FALSE, remove events from censored.
+#' @param at_points Numeric vector of time points.
+#' @return List with cens (censored times), ev (event times), idx_cens, idx_ev, idx_ev_full.
 #' @export
 
 get_censoring_and_events <- function(time, delta, z, group, censoring_allmarks, at_points) {
@@ -167,13 +220,14 @@ get_censoring_and_events <- function(time, delta, z, group, censoring_allmarks, 
   )
 }
 
-# Helper : Get Risk Points
 #' Get risk set counts at specified risk points
 #'
-#' @param ybar Numeric vector of risk set counts
-#' @param risk_points Numeric vector of risk points
-#' @param at_points Numeric vector of time points
-#' @return Numeric vector of risk set counts at risk points
+#' Returns risk set counts at specified risk points.
+#'
+#' @param ybar Numeric vector of risk set counts.
+#' @param risk_points Numeric vector of risk points.
+#' @param at_points Numeric vector of time points.
+#' @return Numeric vector of risk set counts at risk points.
 #' @export
 
 get_riskpoints <- function(ybar, risk_points, at_points) {

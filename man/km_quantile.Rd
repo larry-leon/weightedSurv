@@ -30,5 +30,5 @@ km_quantile(
 List with quantile and confidence interval.
 }
 \description{
-Kaplan-Meier quantile and confidence interval
+Calculates the quantile and confidence interval for a Kaplan-Meier curve.
 }

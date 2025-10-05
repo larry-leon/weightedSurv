@@ -6,7 +6,7 @@
 #' @param sig_bhat Standard error of the estimate.
 #' @param alpha Significance level (default: 0.05).
 #' @param verbose Logical; if TRUE, prints interval.
-#' @return Numeric vector with lower and upper confidence limits.
+#' @return Data frame with log hazard ratio, standard error, hazard ratio, lower and upper confidence limits.
 #' @importFrom stats qnorm
 #' @export
 
@@ -41,7 +41,7 @@ ci_cox  <- function(bhat, sig_bhat, alpha = 0.05, verbose = FALSE) {
 #' @param error Numeric vector of error terms.
 #' @param delta Numeric vector of event indicators.
 #' @param weight Numeric vector of weights (default: 1).
-#' @return Numeric vector of weighted event counts.
+#' @return Numeric value of weighted event count.
 #' @export
 
 N_rhogamma <- function(x, error, delta, weight = 1) {
@@ -57,7 +57,7 @@ N_rhogamma <- function(x, error, delta, weight = 1) {
 #' @param z Numeric vector of group indicators.
 #' @param w_hat Numeric vector of weights.
 #' @param wt_rg Numeric vector of rho-gamma weights.
-#' @return Numeric value of the root (estimate).
+#' @return List with root and additional information, or NA if not found.
 #' @importFrom stats uniroot
 #' @export
 
@@ -74,14 +74,14 @@ find_cox_root <- function(time, delta, z, w_hat, wt_rg) {
 
 #' Score calculation for weighted Cox model
 #'
-#' Calculates the score for the weighted Cox model.
+#' Calculates the score and variance for the weighted Cox model.
 #'
 #' @param ybar1 Numeric vector of event counts for group 1.
 #' @param ybar0 Numeric vector of event counts for group 0.
 #' @param dN1 Numeric vector of event increments for group 1.
 #' @param dN0 Numeric vector of event increments for group 0.
 #' @param wt_rg Numeric vector of rho-gamma weights.
-#' @return Numeric value of the score.
+#' @return List with score, variance, information, and weights.
 #' @export
 
 score_calculation <- function(ybar1, ybar0, dN1, dN0, wt_rg){
@@ -167,7 +167,7 @@ cox_score_rhogamma <- function(beta, time, delta, z, w_hat = rep(1,length(time))
 #' @param verbose Logical; if TRUE, prints details.
 #' @param lr.digits Number of digits for log-rank results (default: 4).
 #' @return List with Cox model results and statistics.
-#' @importFrom stats confint var
+#' @importFrom stats confint var pnorm
 #' @export
 
 cox_rhogamma <- function(dfcount, scheme = "fh", scheme_params = list(rho = 0, gamma = 0.5), draws = 0, alpha = 0.05, verbose = FALSE, lr.digits = 4) {
@@ -289,19 +289,20 @@ ans
 
 
 
-# ---- Resampling Function ----
-
 #' Resampling for Weighted Cox Model (rho, gamma)
-#' @param bhat Estimated coefficient
-#' @param time Event/censoring times
-#' @param delta Event indicator
-#' @param z Treatment group indicator (0/1)
-#' @param w_hat Subjects' weighting (eg. propensity-scores)
-#' @param G1.draws, G0.draws Optional: pre-generated random draws for groups
-#' @param draws Number of resampling iterations
-#' @param seed.value Optional: random seed
-#' @return List with resampling results
-#' @importFrom stats var
+#'
+#' Performs resampling to estimate uncertainty for the weighted Cox model (rho, gamma).
+#'
+#' @param fit_rhogamma List with fitted Cox model results.
+#' @param i_bhat Information at estimated beta.
+#' @param K_wt_rg Weights at estimated beta.
+#' @param i_zero Information at beta=0.
+#' @param K_zero Weights at beta=0.
+#' @param G1.draws, G0.draws Optional: pre-generated random draws for groups.
+#' @param draws Number of resampling iterations (default: 100).
+#' @param seedstart Random seed for reproducibility (default: 8316951).
+#' @return List with resampling results (score, beta, standard error, etc.).
+#' @importFrom stats var rnorm
 #' @export
 
 cox_rhogamma_resample <- function(fit_rhogamma, i_bhat, K_wt_rg, i_zero, K_zero, G1.draws = NULL, G0.draws = NULL,

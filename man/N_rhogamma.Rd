@@ -16,7 +16,7 @@ N_rhogamma(x, error, delta, weight = 1)
 \item{weight}{Numeric vector of weights (default: 1).}
 }
 \value{
-Numeric vector of weighted event counts.
+Numeric value of weighted event count.
 }
 \description{
 Calculates the weighted event count for the Cox model with rho-gamma weights.
