@@ -34,7 +34,8 @@
 #'
 #' @return A list containing Cox model results, logrank results, risk/event sets, KM curves, quantiles, variance estimates, and diagnostic checks.
 #'
-#' @importFrom survival Surv coxph survfit survdiff
+#' @importFrom stats as.formula pchisq
+#' @importFrom survival aeqSurv Surv coxph survfit survdiff
 #' @export
 
 df_counting <- function(df, tte.name, event.name, treat.name, weight.name=NULL, strata.name = NULL, arms=c("treat","control"),

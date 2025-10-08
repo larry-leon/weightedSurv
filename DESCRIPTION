@@ -1,6 +1,6 @@
 Package: weightedSurv
 Title: Survival Analysis with Subject-Specific (Case Weights) and Time-Dependent Weighting
-Version: 0.0.0.9000
+Version: 0.1.0
 Authors@R: 
     person("Larry", "Leon", , "larry.leon.05@post.harvard.edu", role = c("aut", "cre"))
 Description:
@@ -16,8 +16,11 @@ Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2
 Imports: 
     ggplot2,
+    graphics,
     rlang,
-    survival
+    stats,
+    survival,
+    utils
 Suggests:
   adjustedCurves,
   arsenal,

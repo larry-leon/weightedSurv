@@ -52,6 +52,7 @@ plot_km_confint_polygon <- function(x, surv, se, conf_level, col) {
 #' @param conf_level Confidence level (default 0.95).
 #' @param censor.cex Numeric; censoring mark size (default 1.0).
 #' @param ... Additional arguments to plot.
+#' @inheritParams KM_plot_2sample_weighted_counting
 #' @importFrom graphics plot lines legend title axis box points
 #' @export
 
@@ -93,7 +94,7 @@ plot_km_curves_counting <- function(
 
 #' Check KM curve for validity
 #'
-#' Checks that a Kaplan-Meier curve is valid (values in [0,1], non-increasing).
+#' Checks that a Kaplan-Meier curve is valid (values in \[0,1\], non-increasing).
 #'
 #' @param S.KM Numeric vector of survival probabilities.
 #' @param group_name Character; name of the group.
@@ -213,31 +214,59 @@ add_legends <- function(dfcount, show.cox, cox.cex, put.legend.cox, show.logrank
 #' @param cox.cex Numeric; text size for Cox annotation.
 #' @param show.logrank Logical; show log-rank test results.
 #' @param logrank.cex Numeric; text size for log-rank annotation.
-#' @param cox.eps, lr.eps Numeric; small values for Cox/log-rank calculations.
+#' @param cox.eps Numeric; small values for Cox calculations.
+#' @param lr.eps Numeric; small values for log-rank calculations.
 #' @param show_arm_legend Logical; show arm legend.
 #' @param arms Character vector of arm labels.
-#' @param put.legend.arms, put.legend.cox, put.legend.lr Character; legend positions.
+#' @param put.legend.arms Character; legend positions.
+#' @param put.legend.cox Character; legend positions.
+#' @param put.legend.lr Character; legend positions.
 #' @param stop.onerror Logical; stop on KM curve errors.
 #' @param check.KM Logical; check KM curve validity.
-#' @param lr.digits, cox.digits Integer; digits for test results.
+#' @param lr.digits Integer; digits for test results.
+#' @param cox.digits Integer; digits for test results.
 #' @param tpoints.add Numeric; additional time points for risk table.
 #' @param by.risk Numeric; interval for risk table time points.
-#' @param Xlab, Ylab Character; axis labels.
-#' @param col.0, col.1 Color for control and treatment curves.
+#' @param Xlab Character; axis labels.
+#' @param Ylab Character; axis labels.
+#' @param col.0 Color for control curve.
+#' @param col.1 Color for treatment curve.
 #' @param show.med Logical; annotate median survival.
-#' @param med.digits, med.font, med.cex, ymed.offset, xmed.fraction Median annotation settings.
+#' @param med.digits Median annotation settings.
+#' @param med.font Median annotation settings.
+#' @param med.cex Median annotation settings.
+#' @param ymed.offset Median annotation settings.
+#' @param xmed.fraction Median annotation settings.
 #' @param conf.int Logical; plot confidence intervals.
 #' @param conf_level Numeric; confidence level for intervals.
 #' @param choose_ylim Logical; auto-select y-axis limits.
 #' @param arm.cex Numeric; text size for arm legend.
-#' @param quant, qlabel Numeric/character; quantile and label for annotation.
+#' @param quant Numeric; quantile for annotation.
+#' @param qlabel character; label for annotation.
 #' @param risk.cex Numeric; text size for risk table.
-#' @param ltys, lwds Integer; line types and widths for curves.
+#' @param ltys Integer; line types for curves.
+#' @param lwds Integer; line widths for curves.
 #' @param censor.mark.all Logical; mark all censored times.
 #' @param censor.cex Numeric; size of censor marks.
 #' @param show.ticks Logical; show axis ticks.
 #' @param risk.set Logical; display risk table.
-#' @param ymin, ymax, ymin.del, ymin2, risk_offset, risk_delta, y.risk0, y.risk1, show.Y.axis, cex_Yaxis, add.segment, risk.add, xmin, xmax, x.truncate, time.zero, prob.points Additional graphical and calculation parameters.
+#' @param ymin Additional graphical and calculation parameters.
+#' @param ymax Additional graphical and calculation parameters.
+#' @param ymin.del Additional graphical and calculation parameters.
+#' @param ymin2 Additional graphical and calculation parameters.
+#' @param risk_offset Additional graphical and calculation parameters.
+#' @param risk_delta Additional graphical and calculation parameters.
+#' @param y.risk0 Additional graphical and calculation parameters.
+#' @param y.risk1 Additional graphical and calculation parameters.
+#' @param show.Y.axis Additional graphical and calculation parameters.
+#' @param cex_Yaxis Additional graphical and calculation parameters.
+#' @param add.segment Additional graphical and calculation parameters.
+#' @param risk.add Additional graphical and calculation parameters.
+#' @param xmin Additional graphical and calculation parameters.
+#' @param xmax Additional graphical and calculation parameters.
+#' @param x.truncate Additional graphical and calculation parameters.
+#' @param time.zero Additional graphical and calculation parameters.
+#' @param prob.points Additional graphical and calculation parameters.
 #' @return Invisibly returns NULL. Used for plotting side effects.
 #' @importFrom graphics plot lines legend title axis box abline par points
 #' @export
@@ -330,13 +359,32 @@ KM_plot_2sample_weighted_counting <- function(
 #' @param lwd Line width for curves (default: 2).
 #' @param sg_colors Colors for subgroup curves.
 #' @param color Color for confidence band polygon (default: "lightgrey").
-#' @param ymax.pad, ymin.pad Padding for y-axis limits.
+#' @param ymax.pad Padding for y-axis limits.
+#' @param ymin.pad Padding for y-axis limits.
 #' @param taus Vector for time truncation (default: c(-Inf, Inf)).
 #' @param yseq_length Number of y-axis ticks (default: 5).
-#' @param cex_Yaxis, risk_cex Text size for axis and risk table.
+#' @param cex_Yaxis Text size for axis.
+#' @param risk_cex Text size for risk table.
 #' @param by.risk Interval for risk table time points (default: 6).
 #' @param risk.add Additional time points for risk table.
-#' @param xmax, ymin, ymax, ymin.del, y.risk1, y.risk2, ymin2, risk_offset, risk.pad, risk_delta, tau_add, time.zero.pad, time.zero.label, xlabel, ylabel, Maxtau, seedstart, ylim Additional graphical and calculation parameters.
+#' @param xmax Additional graphical and calculation parameters.
+#' @param ymin Additional graphical and calculation parameters.
+#' @param ymax Additional graphical and calculation parameters.
+#' @param ymin.del Additional graphical and calculation parameters.
+#' @param y.risk1 Additional graphical and calculation parameters.
+#' @param y.risk2 Additional graphical and calculation parameters.
+#' @param ymin2 Additional graphical and calculation parameters.
+#' @param risk_offset Additional graphical and calculation parameters.
+#' @param risk.pad Additional graphical and calculation parameters.
+#' @param risk_delta Additional graphical and calculation parameters.
+#' @param tau_add Additional graphical and calculation parameters.
+#' @param time.zero.pad Additional graphical and calculation parameters.
+#' @param time.zero.label Additional graphical and calculation parameters.
+#' @param xlabel Additional graphical and calculation parameters.
+#' @param ylabel Additional graphical and calculation parameters.
+#' @param Maxtau Additional graphical and calculation parameters.
+#' @param seedstart Additional graphical and calculation parameters.
+#' @param ylim Additional graphical and calculation parameters.
 #' @param draws.band Number of draws for simultaneous confidence bands (default: 20).
 #' @param qtau Quantile for time range in simultaneous bands (default: 0.025).
 #' @param show_resamples Logical; whether to plot resampled curves (default: FALSE).

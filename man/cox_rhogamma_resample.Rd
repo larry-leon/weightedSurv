@@ -27,7 +27,9 @@ cox_rhogamma_resample(
 
 \item{K_zero}{Weights at beta=0.}
 
-\item{G1.draws, }{G0.draws Optional: pre-generated random draws for groups.}
+\item{G1.draws}{Optional: pre-generated random draws for groups.}
+
+\item{G0.draws}{Optional: pre-generated random draws for groups.}
 
 \item{draws}{Number of resampling iterations (default: 100).}
 

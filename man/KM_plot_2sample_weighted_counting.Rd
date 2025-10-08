@@ -76,31 +76,45 @@ KM_plot_2sample_weighted_counting(
 
 \item{logrank.cex}{Numeric; text size for log-rank annotation.}
 
-\item{cox.eps, }{lr.eps Numeric; small values for Cox/log-rank calculations.}
+\item{cox.eps}{Numeric; small values for Cox calculations.}
+
+\item{lr.eps}{Numeric; small values for log-rank calculations.}
 
 \item{show_arm_legend}{Logical; show arm legend.}
 
 \item{arms}{Character vector of arm labels.}
 
-\item{put.legend.arms, }{put.legend.cox, put.legend.lr Character; legend positions.}
+\item{put.legend.arms}{Character; legend positions.}
 
 \item{stop.onerror}{Logical; stop on KM curve errors.}
 
 \item{check.KM}{Logical; check KM curve validity.}
 
-\item{lr.digits, }{cox.digits Integer; digits for test results.}
+\item{put.legend.cox}{Character; legend positions.}
+
+\item{put.legend.lr}{Character; legend positions.}
+
+\item{lr.digits}{Integer; digits for test results.}
+
+\item{cox.digits}{Integer; digits for test results.}
 
 \item{tpoints.add}{Numeric; additional time points for risk table.}
 
 \item{by.risk}{Numeric; interval for risk table time points.}
 
-\item{Xlab, }{Ylab Character; axis labels.}
+\item{Xlab}{Character; axis labels.}
 
-\item{col.0, }{col.1 Color for control and treatment curves.}
+\item{Ylab}{Character; axis labels.}
+
+\item{col.0}{Color for control curve.}
+
+\item{col.1}{Color for treatment curve.}
 
 \item{show.med}{Logical; annotate median survival.}
 
-\item{med.digits, }{med.font, med.cex, ymed.offset, xmed.fraction Median annotation settings.}
+\item{med.digits}{Median annotation settings.}
+
+\item{med.font}{Median annotation settings.}
 
 \item{conf.int}{Logical; plot confidence intervals.}
 
@@ -110,11 +124,21 @@ KM_plot_2sample_weighted_counting(
 
 \item{arm.cex}{Numeric; text size for arm legend.}
 
-\item{quant, }{qlabel Numeric/character; quantile and label for annotation.}
+\item{quant}{Numeric; quantile for annotation.}
+
+\item{qlabel}{character; label for annotation.}
+
+\item{med.cex}{Median annotation settings.}
+
+\item{ymed.offset}{Median annotation settings.}
+
+\item{xmed.fraction}{Median annotation settings.}
 
 \item{risk.cex}{Numeric; text size for risk table.}
 
-\item{ltys, }{lwds Integer; line types and widths for curves.}
+\item{ltys}{Integer; line types for curves.}
+
+\item{lwds}{Integer; line widths for curves.}
 
 \item{censor.mark.all}{Logical; mark all censored times.}
 
@@ -124,7 +148,39 @@ KM_plot_2sample_weighted_counting(
 
 \item{risk.set}{Logical; display risk table.}
 
-\item{ymin, }{ymax, ymin.del, ymin2, risk_offset, risk_delta, y.risk0, y.risk1, show.Y.axis, cex_Yaxis, add.segment, risk.add, xmin, xmax, x.truncate, time.zero, prob.points Additional graphical and calculation parameters.}
+\item{ymin}{Additional graphical and calculation parameters.}
+
+\item{ymax}{Additional graphical and calculation parameters.}
+
+\item{ymin.del}{Additional graphical and calculation parameters.}
+
+\item{ymin2}{Additional graphical and calculation parameters.}
+
+\item{risk_offset}{Additional graphical and calculation parameters.}
+
+\item{risk_delta}{Additional graphical and calculation parameters.}
+
+\item{y.risk0}{Additional graphical and calculation parameters.}
+
+\item{show.Y.axis}{Additional graphical and calculation parameters.}
+
+\item{cex_Yaxis}{Additional graphical and calculation parameters.}
+
+\item{y.risk1}{Additional graphical and calculation parameters.}
+
+\item{add.segment}{Additional graphical and calculation parameters.}
+
+\item{risk.add}{Additional graphical and calculation parameters.}
+
+\item{xmin}{Additional graphical and calculation parameters.}
+
+\item{xmax}{Additional graphical and calculation parameters.}
+
+\item{x.truncate}{Additional graphical and calculation parameters.}
+
+\item{time.zero}{Additional graphical and calculation parameters.}
+
+\item{prob.points}{Additional graphical and calculation parameters.}
 }
 \value{
 Invisibly returns NULL. Used for plotting side effects.
