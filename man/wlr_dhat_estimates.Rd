@@ -15,25 +15,12 @@ wlr_dhat_estimates(
 \item{dfcounting}{List output from \code{df_counting} containing risk sets, event counts, and survival estimates.}
 
 \item{scheme}{Character string specifying weighting scheme. One of:
-\"fh\" (Fleming-Harrington), \"schemper\", \"XO\", \"MB\", \"custom_time\", or \"custom_code\".}
+"fh" (Fleming-Harrington), "schemper", "XO", "MB", "custom_time", or "custom_code".}
+
+\item{scheme_params}{Named list with numeric weighting parameters \code{rho}
+and \code{gamma} (used for "fh" and "custom_code" schemes).}
 
 \item{tzero}{Time point at which to evaluate the difference in survival (default: 24).}
-
-\item{rho}{Numeric weighting parameter (used for \"fh\" and \"custom_code\" schemes).}
-
-\item{gamma}{Numeric weighting parameter (used for \"fh\" and \"custom_code\" schemes).}
-
-\item{Scensor}{Optional numeric vector of censoring probabilities (for \"schemper\" scheme).}
-
-\item{Ybar}{Optional numeric vector of risk set sizes (for \"XO\" scheme).}
-
-\item{tpoints}{Optional numeric vector of time points (for \"custom_time\" and \"MB\" schemes).}
-
-\item{t.tau}{Optional time cutoff for \"custom_time\" weights.}
-
-\item{w0.tau, }{w1.tau Weights before/after t.tau (for \"custom_time\" scheme).}
-
-\item{mb_tstar}{Optional time for MB weights.}
 }
 \value{
 A list with elements:

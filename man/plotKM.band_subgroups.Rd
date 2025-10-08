@@ -74,19 +74,57 @@ plotKM.band_subgroups(
 
 \item{color}{Color for confidence band polygon (default: "lightgrey").}
 
-\item{ymax.pad, }{ymin.pad Padding for y-axis limits.}
+\item{ymax.pad}{Padding for y-axis limits.}
+
+\item{ymin.pad}{Padding for y-axis limits.}
 
 \item{taus}{Vector for time truncation (default: c(-Inf, Inf)).}
 
 \item{yseq_length}{Number of y-axis ticks (default: 5).}
 
-\item{cex_Yaxis, }{risk_cex Text size for axis and risk table.}
+\item{cex_Yaxis}{Text size for axis.}
+
+\item{risk_cex}{Text size for risk table.}
 
 \item{by.risk}{Interval for risk table time points (default: 6).}
 
 \item{risk.add}{Additional time points for risk table.}
 
-\item{xmax, }{ymin, ymax, ymin.del, y.risk1, y.risk2, ymin2, risk_offset, risk.pad, risk_delta, tau_add, time.zero.pad, time.zero.label, xlabel, ylabel, Maxtau, seedstart, ylim Additional graphical and calculation parameters.}
+\item{xmax}{Additional graphical and calculation parameters.}
+
+\item{ymin}{Additional graphical and calculation parameters.}
+
+\item{ymax}{Additional graphical and calculation parameters.}
+
+\item{ymin.del}{Additional graphical and calculation parameters.}
+
+\item{y.risk1}{Additional graphical and calculation parameters.}
+
+\item{y.risk2}{Additional graphical and calculation parameters.}
+
+\item{ymin2}{Additional graphical and calculation parameters.}
+
+\item{risk_offset}{Additional graphical and calculation parameters.}
+
+\item{risk.pad}{Additional graphical and calculation parameters.}
+
+\item{risk_delta}{Additional graphical and calculation parameters.}
+
+\item{tau_add}{Additional graphical and calculation parameters.}
+
+\item{time.zero.pad}{Additional graphical and calculation parameters.}
+
+\item{time.zero.label}{Additional graphical and calculation parameters.}
+
+\item{xlabel}{Additional graphical and calculation parameters.}
+
+\item{ylabel}{Additional graphical and calculation parameters.}
+
+\item{Maxtau}{Additional graphical and calculation parameters.}
+
+\item{seedstart}{Additional graphical and calculation parameters.}
+
+\item{ylim}{Additional graphical and calculation parameters.}
 
 \item{draws.band}{Number of draws for simultaneous confidence bands (default: 20).}
 
