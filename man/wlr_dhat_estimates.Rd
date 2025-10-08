@@ -15,10 +15,10 @@ wlr_dhat_estimates(
 \item{dfcounting}{List output from \code{df_counting} containing risk sets, event counts, and survival estimates.}
 
 \item{scheme}{Character string specifying weighting scheme. One of:
-\"fh\" (Fleming-Harrington), \"schemper\", \"XO\", \"MB\", \"custom_time\", or \"custom_code\".}
+"fh" (Fleming-Harrington), "schemper", "XO", "MB", "custom_time", or "custom_code".}
 
 \item{scheme_params}{Named list with numeric weighting parameters \code{rho}
-and \code{gamma} (used for \"fh\" and \"custom_code\" schemes).}
+and \code{gamma} (used for "fh" and "custom_code" schemes).}
 
 \item{tzero}{Time point at which to evaluate the difference in survival (default: 24).}
 }

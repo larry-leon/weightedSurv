@@ -153,10 +153,10 @@ km_quantile_table <- function(time_points, surv0, se0, surv1, se1, arms = c("tre
 #'
 #' @param dfcounting List output from \code{df_counting} containing risk sets, event counts, and survival estimates.
 #' @param scheme_params Named list with numeric weighting parameters \code{rho}
-#'   and \code{gamma} (used for \"fh\" and \"custom_code\" schemes).
+#'   and \code{gamma} (used for "fh" and "custom_code" schemes).
 #' @param tzero Time point at which to evaluate the difference in survival (default: 24).
 #' @param scheme Character string specifying weighting scheme. One of:
-#'   \"fh\" (Fleming-Harrington), \"schemper\", \"XO\", \"MB\", \"custom_time\", or \"custom_code\".
+#'   "fh" (Fleming-Harrington), "schemper", "XO", "MB", "custom_time", or "custom_code".
 #'
 #' @return A list with elements:
 #'   \item{lr}{Weighted log-rank test statistic.}

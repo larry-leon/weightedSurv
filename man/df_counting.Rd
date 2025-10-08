@@ -74,7 +74,7 @@ df_counting(
 
 \item{qprob}{Numeric; quantile probability for KM quantile table (default 0.5).}
 
-\item{scheme}{Character; weighting scheme for logrank/FH test (default \"fh\").}
+\item{scheme}{Character; weighting scheme for logrank/FH test (default "fh").}
 
 \item{scheme_params}{List; parameters for weighting scheme (default list(rho = 0, gamma = 0)).}
 
