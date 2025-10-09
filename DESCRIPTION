@@ -8,7 +8,7 @@ Description:
   (for example, propensity-scores) weighting. Weighted estimation for Cox model,
   Kaplan-Meier treatment survival curves as well as treatment difference along
   with point-wise and simultaneous confidence bands, and restricted mean
-  survival time comparisons where "RMST" estimates are evaluated across all
+  survival time comparisons where 'RMST' estimates are evaluated across all
   potential truncation times (point-wise and simultaneous bands).
 License: MIT + file LICENSE
 Encoding: UTF-8
