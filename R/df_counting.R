@@ -22,7 +22,7 @@
 #' @param lr.eps Numeric; threshold for logrank p-value formatting (default 0.001).
 #' @param verbose Logical; print warnings/errors (default FALSE).
 #' @param qprob Numeric; quantile probability for KM quantile table (default 0.5).
-#' @param scheme Character; weighting scheme for logrank/FH test (default \"fh\").
+#' @param scheme Character; weighting scheme for logrank/FH test (default "fh").
 #' @param scheme_params List; parameters for weighting scheme (default list(rho = 0, gamma = 0)).
 #' @param conf_level Numeric; confidence level for quantiles (default 0.95).
 #' @param check.KM Logical; check KM curve fits (default TRUE).
@@ -34,7 +34,8 @@
 #'
 #' @return A list containing Cox model results, logrank results, risk/event sets, KM curves, quantiles, variance estimates, and diagnostic checks.
 #'
-#' @importFrom survival Surv coxph survfit survdiff
+#' @importFrom stats as.formula pchisq
+#' @importFrom survival aeqSurv Surv coxph survfit survdiff
 #' @export
 
 df_counting <- function(df, tte.name, event.name, treat.name, weight.name=NULL, strata.name = NULL, arms=c("treat","control"),

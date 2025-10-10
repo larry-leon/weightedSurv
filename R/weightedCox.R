@@ -298,7 +298,8 @@ ans
 #' @param K_wt_rg Weights at estimated beta.
 #' @param i_zero Information at beta=0.
 #' @param K_zero Weights at beta=0.
-#' @param G1.draws, G0.draws Optional: pre-generated random draws for groups.
+#' @param G1.draws Optional: pre-generated random draws for groups.
+#' @param G0.draws Optional: pre-generated random draws for groups.
 #' @param draws Number of resampling iterations (default: 100).
 #' @param seedstart Random seed for reproducibility (default: 8316951).
 #' @return List with resampling results (score, beta, standard error, etc.).

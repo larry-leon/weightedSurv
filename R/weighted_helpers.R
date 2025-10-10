@@ -162,7 +162,6 @@ extract_and_calc_weights <- function(atpoints, S.pool, weights_spec_list) {
 #' @param scheme Character string specifying the weighting scheme.
 #' @param scheme_params List of parameters for the scheme.
 #' @param details Logical; if TRUE, returns detailed output.
-#' @param ... Additional arguments.
 #' @return Numeric vector or list of validated weights.
 #' @export
 

@@ -1,4 +1,3 @@
 # Ignore all files in vignettes/results/ and its subfolders
 vignettes/results/
 .Rproj.user
-.DS_Store

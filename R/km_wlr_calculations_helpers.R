@@ -152,17 +152,11 @@ km_quantile_table <- function(time_points, surv0, se0, surv1, se1, arms = c("tre
 #' The weighting scheme is selected via the \code{scheme} argument and is calculated using \code{wt.rg.S}.
 #'
 #' @param dfcounting List output from \code{df_counting} containing risk sets, event counts, and survival estimates.
-#' @param rho Numeric weighting parameter (used for \"fh\" and \"custom_code\" schemes).
-#' @param gamma Numeric weighting parameter (used for \"fh\" and \"custom_code\" schemes).
+#' @param scheme_params Named list with numeric weighting parameters \code{rho}
+#'   and \code{gamma} (used for "fh" and "custom_code" schemes).
 #' @param tzero Time point at which to evaluate the difference in survival (default: 24).
 #' @param scheme Character string specifying weighting scheme. One of:
-#'   \"fh\" (Fleming-Harrington), \"schemper\", \"XO\", \"MB\", \"custom_time\", or \"custom_code\".
-#' @param Scensor Optional numeric vector of censoring probabilities (for \"schemper\" scheme).
-#' @param Ybar Optional numeric vector of risk set sizes (for \"XO\" scheme).
-#' @param tpoints Optional numeric vector of time points (for \"custom_time\" and \"MB\" schemes).
-#' @param t.tau Optional time cutoff for \"custom_time\" weights.
-#' @param w0.tau, w1.tau Weights before/after t.tau (for \"custom_time\" scheme).
-#' @param mb_tstar Optional time for MB weights.
+#'   "fh" (Fleming-Harrington), "schemper", "XO", "MB", "custom_time", or "custom_code".
 #'
 #' @return A list with elements:
 #'   \item{lr}{Weighted log-rank test statistic.}

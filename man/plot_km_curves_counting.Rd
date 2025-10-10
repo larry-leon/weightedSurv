@@ -86,6 +86,10 @@ plot_km_curves_counting(
 
 \item{censor.cex}{Numeric; censoring mark size (default 1.0).}
 
+\item{time.zero}{Additional graphical and calculation parameters.}
+
+\item{tpoints.add}{Numeric; additional time points for risk table.}
+
 \item{...}{Additional arguments to plot.}
 }
 \description{

@@ -17,5 +17,5 @@ check_km_curve(S.KM, group_name = "Group", stop_on_error = TRUE)
 None. Stops or warns if invalid.
 }
 \description{
-Checks that a Kaplan-Meier curve is valid (values in \link{0,1}, non-increasing).
+Checks that a Kaplan-Meier curve is valid (values in [0,1], non-increasing).
 }

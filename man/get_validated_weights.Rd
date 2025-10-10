@@ -19,8 +19,6 @@ get_validated_weights(
 \item{scheme_params}{List of parameters for the scheme.}
 
 \item{details}{Logical; if TRUE, returns detailed output.}
-
-\item{...}{Additional arguments.}
 }
 \value{
 Numeric vector or list of validated weights.
