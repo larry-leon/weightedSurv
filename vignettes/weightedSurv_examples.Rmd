@@ -169,10 +169,10 @@ df_gbsg$grade3 <- ifelse(df_gbsg$grade == "3", 1, 0)
 # For alternative names, for example if the 
 # time-to-event outcome (tte) is time_months
 # then tte.name <- "time_months"
-#tte.name <- "tte"
-#event.name <- "event"
-#treat.name <- "treat"
-#arms <- c("treat", "control")
+tte.name <- "tte"
+event.name <- "event"
+treat.name <- "treat"
+arms <- c("treat", "control")
 
 ```
 ---- Main Analyses ----
@@ -186,10 +186,6 @@ by.risk = 12, scheme = "fh", scheme_params = list(rho = 0, gamma =0), lr.digits 
 
 # test default names
 #test <- df_counting(df=df_gbsg, by.risk = 12, scheme = "fh", scheme_params = list(rho = 0, gamma =0), lr.digits = 4, cox.digits =3)
-
-
-
-
 ```
 
 ```{r, eval=FALSE}
