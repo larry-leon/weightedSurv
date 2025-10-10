@@ -6,9 +6,9 @@
 \usage{
 df_counting(
   df,
-  tte.name,
-  event.name,
-  treat.name,
+  tte.name = "tte",
+  event.name = "event",
+  treat.name = "treat",
   weight.name = NULL,
   strata.name = NULL,
   arms = c("treat", "control"),

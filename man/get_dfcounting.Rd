@@ -4,25 +4,7 @@
 \alias{get_dfcounting}
 \title{Get df_counting results}
 \usage{
-get_dfcounting(
-  df,
-  tte.name,
-  event.name,
-  treat.name,
-  arms,
-  by.risk = 12,
-  cox.digits = 3,
-  lr.digits = 3,
-  qprob = 0.5,
-  strata.name = NULL,
-  weight.name = NULL,
-  check.KM = TRUE,
-  scheme = "fh",
-  scheme_params = list(rho = 0, gamma = 0),
-  draws = 0,
-  seedstart = 8316951,
-  check.seKM = FALSE
-)
+get_dfcounting(...)
 }
 \arguments{
 \item{df}{Data frame containing survival data.}
