@@ -45,21 +45,6 @@ get_dfcounting <- function(...) {
   })
 }
 
-get_dfcounting_old <- function(df, tte.name, event.name, treat.name, arms, by.risk=12, cox.digits=3, lr.digits=3,
-                           qprob=0.50, strata.name=NULL, weight.name=NULL, check.KM = TRUE, scheme = "fh", scheme_params = list(rho = 0, gamma = 0), draws = 0,
-                           seedstart = 8316951, check.seKM = FALSE) {
-  safe_run({
-    dfcount <- df_counting(
-      df=df, tte.name=tte.name, event.name=event.name, treat.name=treat.name,
-      arms=arms, by.risk=by.risk, cox.digits=cox.digits, lr.digits=lr.digits,
-      qprob=qprob, strata.name=strata.name, weight.name=weight.name, check.KM = check.KM, check.seKM = check.seKM,
-      draws = draws, seedstart=seedstart, scheme = scheme, scheme_params = scheme_params
-    )
-    return(dfcount)
-  })
-}
-
-
 #' Checking results
 #'
 #' Prints summary statistics for logrank and Cox model results from dfcounting.
@@ -114,7 +99,7 @@ plot_km <- function(df, tte.name, event.name, treat.name, weights=NULL, ...) {
 
 plot_weighted_km <- function(dfcount, ...) {
   safe_run({
-    KM_plot_2sample_weighted_counting(dfcount=dfcount, ...
+    KM_plot_2sample_weighted_counting(dfcount, ...
     )
   })
 }

@@ -165,10 +165,14 @@ df_gbsg$treat <- df_gbsg$hormon
 df_gbsg$grade3 <- ifelse(df_gbsg$grade == "3", 1, 0)
 
 
-tte.name <- "tte"
-event.name <- "event"
-treat.name <- "treat"
-arms <- c("treat", "control")
+# Note that these are default names
+# For alternative names, for example if the 
+# time-to-event outcome (tte) is time_months
+# then tte.name <- "time_months"
+#tte.name <- "tte"
+#event.name <- "event"
+#treat.name <- "treat"
+#arms <- c("treat", "control")
 
 ```
 ---- Main Analyses ----
@@ -176,8 +180,16 @@ arms <- c("treat", "control")
 GBSG - ITT Analysis
 ```{r}
 # Returns standard log-rank (FH(0,0) via scheme="fh" rho,gamma = 0 in scheme_params)
-dfcount_gbsg <- df_counting(df=df_gbsg, tte.name=tte.name, event.name=event.name, treat.name=treat.name, arms=arms, 
+
+dfcount_gbsg <- df_counting(df=df_gbsg, tte.name = tte.name, event.name = event.name, treat.name = treat.name, arms = arms, 
 by.risk = 12, scheme = "fh", scheme_params = list(rho = 0, gamma =0), lr.digits = 4, cox.digits =3)
+
+# test default names
+#test <- df_counting(df=df_gbsg, by.risk = 12, scheme = "fh", scheme_params = list(rho = 0, gamma =0), lr.digits = 4, cox.digits =3)
+
+
+
+
 ```
 
 ```{r, eval=FALSE}
@@ -206,9 +218,12 @@ par(mfrow=c(1,2))
 # Set ymax a little above 1.0 to allow for logrank placement in topleft
 # topleft is default; xmed.fraction = 0.65 positions the display of the median estimates below the HR estimates ("topright" legend [default])
 # For details, please see summary of xmed.fraction in the Appendix below.
+
 plot_weighted_km(dfcount=dfcount_gbsg, conf.int=FALSE, show.logrank = TRUE, 
                  put.legend.lr = "topleft", ymax = 1.05, xmed.fraction = 0.65)
 title(main="GBSG (trial) data un-weighted")
+
+
 # Compare with survfit
 plot_km(df=df_gbsg, tte.name=tte.name, event.name=event.name, treat.name=treat.name)
 title(main="GBSG (trial) data un-weighted
