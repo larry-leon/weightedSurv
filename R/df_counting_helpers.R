@@ -45,7 +45,6 @@ get_dfcounting <- function(...) {
   })
 }
 
-
 get_dfcounting_old <- function(df, tte.name, event.name, treat.name, arms, by.risk=12, cox.digits=3, lr.digits=3,
                            qprob=0.50, strata.name=NULL, weight.name=NULL, check.KM = TRUE, scheme = "fh", scheme_params = list(rho = 0, gamma = 0), draws = 0,
                            seedstart = 8316951, check.seKM = FALSE) {

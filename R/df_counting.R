@@ -38,7 +38,7 @@
 #' @importFrom survival aeqSurv Surv coxph survfit survdiff
 #' @export
 
-df_counting <- function(df, tte.name, event.name, treat.name, weight.name=NULL, strata.name = NULL, arms=c("treat","control"),
+df_counting <- function(df, tte.name = "tte", event.name = "event", treat.name = "treat", weight.name=NULL, strata.name = NULL, arms=c("treat","control"),
                         time.zero=0, tpoints.add=c(0),
                         by.risk=6, time.zero.label = 0.0, risk.add=NULL, get.cox=TRUE, cox.digits=2, lr.digits=2,
                         cox.eps = 0.001, lr.eps = 0.001, verbose = FALSE,
