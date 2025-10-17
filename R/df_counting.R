@@ -70,8 +70,8 @@
 #'
 #' @section Weighting Schemes:
 #' \describe{
-#'   \item{fh}{Fleming-Harrington: w(t) = S(t)^{\rho} \times (1-S(t))^\gamma}
-#'   \item{MB}{Magirr-Burman: w(t) = 1/\max(S(t), S(t^*))}
+#'   \item{fh}{Fleming-Harrington: w(t) = S(t)^rho * (1-S(t))^gamma}
+#'   \item{MB}{Magirr-Burman: w(t) = 1/max(S(t), S(t*))}
 #'   \item{schemper}{Schemper: w(t) = S(t)/G(t) where G is the censoring distribution}
 #'   \item{XO}{Xu-O'Quigley: w(t) = S(t)/Y(t) where Y is risk set size}
 #' }

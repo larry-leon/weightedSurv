@@ -40,8 +40,7 @@
 #'       \item rho=0, gamma=1: Emphasizes late differences
 #'       \item rho=1, gamma=0: Emphasizes early differences
 #'       \item rho=0.5, gamma=0.5: Balanced weighting
-#'     }
-#'   }
+#'     } }
 #'   \item{Schemper}{w(t) = S(t-)/G(t-) where G is the censoring distribution.
 #'     Upweights times with heavy censoring.
 #'   }
