@@ -96,5 +96,10 @@ KM_diff <- function(df, tte.name = "tte", event.name = "event", treat.name = "tr
                     weight.name=NULL, at_points = sort(df[[tte.name]]), alpha = 0.05, 
                     seedstart = 8316951, draws = 0, risk.points, draws.band = 0, 
                     tau.seq = 0.25, qtau = 0.025, show_resamples = TRUE, modify_tau = FALSE) {
-  # Function body here (add your original function code)
+  
+  # ============================================================================
+  # INSERT YOUR COMPLETE FUNCTION IMPLEMENTATION HERE
+  # ============================================================================
+  # This is where your full KM_diff function body goes
+  
 }

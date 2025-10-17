@@ -97,5 +97,10 @@
 wt.rg.S <- function(S, scheme = c('fh', 'schemper', 'XO', 'MB', 'custom_time', 'fh_exp1','fh_exp2'),
                     rho = NULL, gamma = NULL, Scensor = NULL, Ybar = NULL, tpoints = NULL,
                     t.tau = NULL, w0.tau = 0, w1.tau = 1, mb_tstar = NULL, details = FALSE) {
-  # Function body here (add your original function code)
+  
+  # ============================================================================
+  # INSERT YOUR COMPLETE FUNCTION IMPLEMENTATION HERE
+  # ============================================================================
+  # This is where your full wt.rg.S function body goes
+  
 }

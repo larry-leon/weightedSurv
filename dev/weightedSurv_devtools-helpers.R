@@ -22,6 +22,8 @@ devtools::document()
 
 #roxygen2::roxygenise()
 
+devtools::load_all()
+
 # Step 6: Check the package
 devtools::check()
 

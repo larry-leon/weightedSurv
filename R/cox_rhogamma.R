@@ -107,5 +107,10 @@
 #' @export
 cox_rhogamma <- function(dfcount, scheme = "fh", scheme_params = list(rho = 0, gamma = 0.5), 
                          draws = 0, alpha = 0.05, verbose = FALSE, lr.digits = 4) {
-  # Function body here (add your original function code)
+  
+  # ============================================================================
+  # INSERT YOUR COMPLETE FUNCTION IMPLEMENTATION HERE
+  # ============================================================================
+  # This is where your full cox_rhogamma function body goes
+  
 }

@@ -140,5 +140,19 @@ df_counting <- function(df, tte.name = "tte", event.name = "event", treat.name =
                         conf_level = 0.95, check.KM = TRUE, check.seKM = FALSE, 
                         draws = 0, seedstart = 8316951, stop.onerror=FALSE,
                         censoring_allmarks=TRUE) {
-  # Function body here (add your original function code)
+  
+  # ============================================================================
+  # INSERT YOUR COMPLETE FUNCTION IMPLEMENTATION HERE
+  # ============================================================================
+  # This is where your full df_counting function body goes
+  # Include all your existing code for:
+  # - Data validation and preprocessing
+  # - Time point calculations
+  # - Kaplan-Meier estimation
+  # - Cox model fitting
+  # - Weighted log-rank tests
+  # - Variance calculations
+  # - Result formatting
+  # etc.
+  
 }
