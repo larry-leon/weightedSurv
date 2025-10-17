@@ -1,3 +1,4 @@
 # Ignore all files in vignettes/results/ and its subfolders
 vignettes/results/
 .Rproj.user
+dev/R_legacy

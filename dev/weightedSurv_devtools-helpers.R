@@ -20,12 +20,12 @@ desc::desc_set_dep("survival", file = "DESCRIPTION")
 # Also, run this if revising R files such as @importFrom
 devtools::document()
 
-#roxygen2::roxygenise()
-
 devtools::load_all()
 
 # Step 6: Check the package
 devtools::check()
+
+
 
 usethis::use_git()
 

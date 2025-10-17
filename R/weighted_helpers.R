@@ -34,52 +34,54 @@
 #' This function implements several weighting schemes for weighted log-rank tests:
 #'
 #' \describe{
-#'   \item{Fleming-Harrington (fh)}{\eqn{w(t) = S(t-)^{\rho} \times (1-S(t-))^{\gamma}}
+#'   \item{Fleming-Harrington (fh)}{w(t) = S(t-)^rho * (1-S(t-))^gamma
 #'     \itemize{
-#'       \item \eqn{\rho=0, \gamma=0}: Standard log-rank (equal weights)
-#'       \item \eqn{\rho=0, \gamma=1}: Emphasizes late differences
-#'       \item \eqn{\rho=1, \gamma=0}: Emphasizes early differences
-#'       \item \eqn{\rho=0.5, \gamma=0.5}: Balanced weighting
+#'       \item rho=0, gamma=0: Standard log-rank (equal weights)
+#'       \item rho=0, gamma=1: Emphasizes late differences
+#'       \item rho=1, gamma=0: Emphasizes early differences
+#'       \item rho=0.5, gamma=0.5: Balanced weighting
 #'     }
 #'   }
-#'   \item{Schemper}{\eqn{w(t) = S(t-)/G(t-)} where G is the censoring distribution.
+#'   \item{Schemper}{w(t) = S(t-)/G(t-) where G is the censoring distribution.
 #'     Upweights times with heavy censoring.
 #'   }
-#'   \item{Xu-O'Quigley (XO)}{\eqn{w(t) = S(t-)/Y(t)} where Y is risk set size.
+#'   \item{Xu-O'Quigley (XO)}{w(t) = S(t-)/Y(t) where Y is risk set size.
 #'     Downweights early times with large risk sets.
 #'   }
-#'   \item{Magirr-Burman (MB)}{\eqn{w(t) = 1/\max(S(t-), S(t^*))}
-#'     Modest downweighting after cutoff time \eqn{t^*}.
+#'   \item{Magirr-Burman (MB)}{w(t) = 1/max(S(t-), S(t*))
+#'     Modest downweighting after cutoff time t*.
 #'   }
-#'   \item{Custom time}{Step function with weight \eqn{w_0} before \eqn{t^*}
-#'     and \eqn{w_1} after \eqn{t^*}.
+#'   \item{Custom time}{Step function with weight w_0 before t*
+#'     and w_1 after t*.
 #'   }
 #' }
 #'
 #' @note
-#' All weights are calculated using left-continuous survival probabilities \eqn{S(t-)}
+#' All weights are calculated using left-continuous survival probabilities S(t-)
 #' to ensure consistency with counting process notation.
 #'
 #' @examples
-#' \dontrun{
 #' # Generate example survival curve
 #' time <- seq(0, 24, by = 0.5)
 #' surv <- exp(-0.05 * time)  # Exponential survival
 #'
 #' # Fleming-Harrington (0,1) weights
 #' w_fh01 <- wt.rg.S(surv, scheme = "fh", rho = 0, gamma = 1, tpoints = time)
-#' plot(time, w_fh01, type = "l", main = "FH(0,1) Weights")
 #'
 #' # Magirr-Burman weights
 #' w_mb <- wt.rg.S(surv, scheme = "MB", mb_tstar = 12, tpoints = time)
+#'
+#' # Standard log-rank (equal weights)
+#' w_lr <- wt.rg.S(surv, scheme = "fh", rho = 0, gamma = 0)
+#'
+#' \donttest{
+#' # Plotting examples
+#' plot(time, w_fh01, type = "l", main = "FH(0,1) Weights")
 #' plot(time, w_mb, type = "l", main = "MB(12) Weights")
 #'
 #' # Compare multiple schemes
-#' w_lr <- wt.rg.S(surv, scheme = "fh", rho = 0, gamma = 0)  # Log-rank
-#' w_fh <- wt.rg.S(surv, scheme = "fh", rho = 0, gamma = 1)  # Late emphasis
-#'
 #' plot(time, w_lr, type = "l", ylim = c(0, 2))
-#' lines(time, w_fh, col = "blue")
+#' lines(time, w_fh01, col = "blue")
 #' legend("topleft", c("Log-rank", "FH(0,1)"), col = 1:2, lty = 1)
 #' }
 #'
@@ -95,7 +97,6 @@
 #' @family survival_analysis
 #' @family weighted_tests
 #' @export
-
 wt.rg.S <- function(
     S,
     scheme = c('fh', 'schemper', 'XO', 'MB', 'custom_time', 'fh_exp1','fh_exp2'),
