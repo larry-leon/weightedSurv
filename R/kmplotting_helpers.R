@@ -256,6 +256,7 @@ add_legends <- function(dfcount, show.cox, cox.cex, put.legend.cox, show.logrank
 #' @param ymin2 Additional graphical and calculation parameters.
 #' @param risk_offset Additional graphical and calculation parameters.
 #' @param risk_delta Additional graphical and calculation parameters.
+#' @param prob.points Numeric vector; probability points for additional annotations (default: NULL).
 #' @param y.risk0 Additional graphical and calculation parameters.
 #' @param y.risk1 Additional graphical and calculation parameters.
 #' @param show.Y.axis Additional graphical and calculation parameters.
@@ -265,8 +266,8 @@ add_legends <- function(dfcount, show.cox, cox.cex, put.legend.cox, show.logrank
 #' @param xmin Additional graphical and calculation parameters.
 #' @param xmax Additional graphical and calculation parameters.
 #' @param x.truncate Additional graphical and calculation parameters.
-#' @param time.zero Additional graphical and calculation parameters.
-#' @param prob.points Additional graphical and calculation parameters.
+#' @param time.zero Numeric; time zero value for risk table alignment (default: 0).
+#' @param tpoints.add Numeric vector; additional time points to include (default: c(0)).
 #' @return Invisibly returns NULL. Used for plotting side effects.
 #' @importFrom graphics plot lines legend title axis box abline par points
 #' @export

@@ -19,26 +19,10 @@ safe_run <- function(expr) {
 #'
 #' Wrapper for df_counting, safely executes and returns results for survival analysis.
 #'
-#' @param df Data frame containing survival data.
-#' @param tte.name Name of time-to-event column.
-#' @param event.name Name of event indicator column.
-#' @param treat.name Name of treatment/group column.
-#' @param arms Vector of treatment arms/groups.
-#' @param by.risk Risk interval (default 12).
-#' @param cox.digits Digits for Cox model output (default 3).
-#' @param lr.digits Digits for logrank output (default 3).
-#' @param qprob Quantile probability (default 0.50).
-#' @param strata.name Name of strata column (optional).
-#' @param weight.name Name of weights column (optional).
-#' @param check.KM Logical; check KM curves (default TRUE).
-#' @param scheme Scheme for analysis (default "fh").
-#' @param scheme_params List of scheme parameters (default list(rho = 0, gamma = 0)).
-#' @param draws Number of draws for variance estimation (default 0).
-#' @param seedstart Random seed (default 8316951).
-#' @param check.seKM Logical; check KM standard error (default FALSE).
+#' @param ... Arguments passed to \code{\link{df_counting}}.
 #' @return Result from df_counting or NULL if error.
+#' @seealso \code{\link{df_counting}}
 #' @export
-
 get_dfcounting <- function(...) {
   safe_run({
     df_counting(...)

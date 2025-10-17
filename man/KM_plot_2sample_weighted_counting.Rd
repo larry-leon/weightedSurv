@@ -98,7 +98,7 @@ KM_plot_2sample_weighted_counting(
 
 \item{cox.digits}{Integer; digits for test results.}
 
-\item{tpoints.add}{Numeric; additional time points for risk table.}
+\item{tpoints.add}{Numeric vector; additional time points to include (default: c(0)).}
 
 \item{by.risk}{Numeric; interval for risk table time points.}
 
@@ -178,9 +178,9 @@ KM_plot_2sample_weighted_counting(
 
 \item{x.truncate}{Additional graphical and calculation parameters.}
 
-\item{time.zero}{Additional graphical and calculation parameters.}
+\item{time.zero}{Numeric; time zero value for risk table alignment (default: 0).}
 
-\item{prob.points}{Additional graphical and calculation parameters.}
+\item{prob.points}{Numeric vector; probability points for additional annotations (default: NULL).}
 }
 \value{
 Invisibly returns NULL. Used for plotting side effects.

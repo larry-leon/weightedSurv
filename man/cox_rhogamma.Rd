@@ -68,9 +68,9 @@ inference for variance estimation and bias correction.
 }
 \details{
 This function solves the weighted Cox partial likelihood score equation:
-\deqn{U(\beta) = \sum_i w_i K_i \left(\frac{dN_0}{Y_0} - \frac{dN_1}{Y_1}\right) = 0}
+U(beta) = sum_i w_i K_i (dN_0/Y_0 - dN_1/Y_1) = 0
 
-where \eqn{K_i} are time-dependent weights and \eqn{Y_j, dN_j} are risk sets
+where K_i are time-dependent weights and Y_j, dN_j are risk sets
 and event counts for group j.
 
 When \code{draws > 0}, the function performs resampling to:

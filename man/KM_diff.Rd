@@ -73,7 +73,7 @@ Calculates the difference in Kaplan-Meier curves between two groups, with confid
 intervals and optional resampling-based simultaneous confidence bands.
 }
 \details{
-This function computes the difference in Kaplan-Meier survival curves, \eqn{\delta(t) = S_1(t) - S_0(t)},
+This function computes the difference in Kaplan-Meier survival curves, \delta(t) = S_1(t) - S_0(t),
 along with variance estimates and confidence intervals.
 
 When \code{draws.band > 0}, simultaneous confidence bands are constructed using
