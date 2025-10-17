@@ -1,6 +1,3 @@
-#' @keywords internal
-"_PACKAGE"
-
 #' Weighted Survival Analysis Tools
 #'
 #' Provides functions for weighted and stratified survival analysis, including
@@ -80,6 +77,5 @@
 #' Magirr, D. and Burman, C. F. (2019). Modestly weighted logrank tests. 
 #' Statistics in Medicine, 38(20), 3782-3790.
 #'
-#' @docType package
-#' @name weightedsurvival
-NULL
+#' @keywords internal
+"_PACKAGE"

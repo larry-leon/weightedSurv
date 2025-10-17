@@ -186,6 +186,7 @@ by.risk = 12, scheme = "fh", scheme_params = list(rho = 0, gamma =0), lr.digits 
 
 # test default names
 #test <- df_counting(df=df_gbsg, by.risk = 12, scheme = "fh", scheme_params = list(rho = 0, gamma =0), lr.digits = 4, cox.digits =3)
+
 ```
 
 ```{r, eval=FALSE}

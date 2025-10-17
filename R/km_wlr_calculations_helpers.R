@@ -312,27 +312,97 @@ resampling_survival <- function(U, W, D, at.points, draws.band, surv, G_draws) {
   return(surv_star)
 }
 
-#' KM difference between groups
+#' Kaplan-Meier Difference Between Groups
 #'
-#' Calculates the difference in KM curves between two groups, with confidence intervals and optional resampling bands.
+#' Calculates the difference in Kaplan-Meier curves between two groups, with confidence
+#' intervals and optional resampling-based simultaneous confidence bands.
 #'
-#' @param df Data frame with survival data.
-#' @param tte.name Name of time-to-event variable.
-#' @param event.name Name of event indicator variable.
-#' @param treat.name Name of treatment group variable.
-#' @param weight.name Name of weights variable.
-#' @param at_points Time points for calculation.
-#' @param alpha Significance level.
-#' @param seedstart Random seed.
-#' @param draws Number of resampling draws.
-#' @param risk.points Risk points for calculation.
-#' @param draws.band Number of draws for simultaneous bands.
-#' @param tau.seq Step size for tau sequence.
-#' @param qtau Quantile for tau range.
-#' @param show_resamples Logical; whether to plot resamples.
-#' @param modify_tau Logical; restrict time range for bands.
-#' @return Data frame with KM differences and confidence intervals.
-#' @importFrom survival Surv
+#' @param df Data frame containing survival data.
+#' @param tte.name Character; name of time-to-event variable in \code{df}.
+#' @param event.name Character; name of event indicator variable in \code{df} (1=event, 0=censored).
+#' @param treat.name Character; name of treatment group variable in \code{df} (0=control, 1=treatment).
+#' @param weight.name Character or NULL; name of weights variable in \code{df}.
+#' @param at_points Numeric vector; time points for calculation. Default: sorted unique event times.
+#' @param alpha Numeric; significance level for confidence intervals. Default: 0.05.
+#' @param seedstart Integer; random seed for reproducibility. Default: 8316951.
+#' @param draws Integer; number of draws for pointwise variance estimation. Default: 0.
+#' @param risk.points Numeric vector; time points for risk table display.
+#' @param draws.band Integer; number of draws for simultaneous confidence bands. Default: 0.
+#' @param tau.seq Numeric; step size for tau sequence when \code{modify_tau=TRUE}. Default: 0.25.
+#' @param qtau Numeric; quantile for tau range restriction. Default: 0.025.
+#' @param show_resamples Logical; whether to plot resampled curves. Default: TRUE.
+#' @param modify_tau Logical; whether to restrict time range for simultaneous bands. Default: FALSE.
+#'
+#' @return A list containing:
+#' \describe{
+#'   \item{at_points}{Time points used in calculations}
+#'   \item{surv0, surv1}{Survival estimates for control and treatment groups}
+#'   \item{sig2_surv0, sig2_surv1}{Variance estimates for survival curves}
+#'   \item{dhat}{Survival difference (S1 - S0) at each time point}
+#'   \item{sig2_dhat}{Variance of survival difference}
+#'   \item{lower, upper}{Pointwise confidence limits (1 - alpha/2)}
+#'   \item{sb_lower, sb_upper}{Simultaneous band limits (if draws.band > 0)}
+#'   \item{c_alpha_band}{Critical value for simultaneous band (if draws.band > 0)}
+#'   \item{dhat_star}{Matrix of resampled differences (if draws.band > 0)}
+#'   \item{Zdhat_star}{Standardized resampled differences (if draws.band > 0)}
+#' }
+#'
+#' @details
+#' This function computes the difference in Kaplan-Meier survival curves, \eqn{\delta(t) = S_1(t) - S_0(t)},
+#' along with variance estimates and confidence intervals.
+#'
+#' When \code{draws.band > 0}, simultaneous confidence bands are constructed using
+#' the supremum distribution of the standardized difference process. These bands
+#' maintain the specified coverage probability across all time points simultaneously.
+#'
+#' The variance is estimated using Greenwood's formula for unweighted data, or
+#' resampling-based methods when \code{draws > 0}.
+#'
+#' @section Confidence Intervals vs Bands:
+#' \itemize{
+#'   \item Pointwise CIs (\code{lower}, \code{upper}): Cover the true difference at each time point with probability 1-alpha
+#'   \item Simultaneous bands (\code{sb_lower}, \code{sb_upper}): Cover the entire difference curve with probability 1-alpha
+#' }
+#'
+#' @note Treatment must be coded as 0=control, 1=experimental. Event must be binary (0/1).
+#'
+#' @examples
+#' \dontrun{
+#' library(survival)
+#' data(veteran)
+#' veteran$treat <- as.numeric(veteran$trt) - 1
+#'
+#' # Basic KM difference
+#' result <- KM_diff(
+#'   df = veteran,
+#'   tte.name = "time",
+#'   event.name = "status",
+#'   treat.name = "treat"
+#' )
+#'
+#' # Plot the difference
+#' plot(result$at_points, result$dhat, type = "s",
+#'      xlab = "Time", ylab = "Survival Difference")
+#'
+#' # With simultaneous confidence bands
+#' result_band <- KM_diff(
+#'   df = veteran,
+#'   tte.name = "time",
+#'   event.name = "status",
+#'   treat.name = "treat",
+#'   draws.band = 1000,
+#'   modify_tau = TRUE
+#' )
+#' }
+#'
+#' @seealso
+#' \code{\link{df_counting}} for full survival analysis
+#' \code{\link{plotKM.band_subgroups}} for visualization
+#' \code{\link{cumulative_rmst_bands}} for RMST analysis
+#'
+#' @family survival_analysis
+#' @family plotting_functions
+#' @importFrom survival aeqSurv Surv
 #' @importFrom stats quantile
 #' @importFrom graphics matplot
 #' @export
