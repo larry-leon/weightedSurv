@@ -348,7 +348,8 @@ resampling_survival <- function(U, W, D, at.points, draws.band, surv, G_draws) {
 #' }
 #'
 #' @details
-#' This function computes the difference in Kaplan-Meier survival curves, \delta(t) = S_1(t) - S_0(t),
+#' This function computes the difference in Kaplan-Meier survival curves, delta(t) = S_1(t) - S_0(t),
+#'
 #' along with variance estimates and confidence intervals.
 #'
 #' When \code{draws.band > 0}, simultaneous confidence bands are constructed using
