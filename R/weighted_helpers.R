@@ -27,33 +27,18 @@
 #'   \item{S}{Input survival probabilities}
 #'   \item{S_left}{Left-continuous survival probabilities}
 #'   \item{scheme}{Scheme name}
-#'   \item{Additional components specific to the scheme}
 #' }
 #'
 #' @details
 #' This function implements several weighting schemes for weighted log-rank tests:
-#'
+#' See vignette for details
+#' This function implements several weighting schemes for weighted log-rank tests:
 #' \describe{
-#'   \item{Fleming-Harrington (fh)}{w(t) = S(t-)^rho * (1-S(t-))^gamma
-#'     \itemize{
-#'       \item rho=0, gamma=0: Standard log-rank (equal weights)
-#'       \item rho=0, gamma=1: Emphasizes late differences
-#'       \item rho=1, gamma=0: Emphasizes early differences
-#'       \item rho=0.5, gamma=0.5: Balanced weighting
-#'     }
-#'   }
-#'   \item{Schemper}{w(t) = S(t-)/G(t-) where G is the censoring distribution.
-#'     Upweights times with heavy censoring.
-#'   }
-#'   \item{Xu-O'Quigley (XO)}{w(t) = S(t-)/Y(t) where Y is risk set size.
-#'     Downweights early times with large risk sets.
-#'   }
-#'   \item{Magirr-Burman (MB)}{w(t) = 1/max(S(t-), S(t*))
-#'     Modest downweighting after cutoff time t*.
-#'   }
-#'   \item{Custom time}{Step function with weight w_0 before t*
-#'     and w_1 after t*.
-#'   }
+#'   \item{Fleming-Harrington (fh)}{w(t) = S(t-)^rho * (1-S(t-))^gamma. See vignette for common choices.}
+#'   \item{Schemper}{w(t) = S(t-)/G(t-) where G is the censoring distribution.}
+#'   \item{Xu-O'Quigley (XO)}{w(t) = S(t-)/Y(t) where Y is risk set size.}
+#'   \item{Magirr-Burman (MB)}{w(t) = 1/max(S(t-), S(t*)).}
+#'   \item{Custom time}{Step function with weight w_0 before t* and w_1 after t*.}
 #' }
 #' @note
 #' All weights are calculated using left-continuous survival probabilities S(t-)

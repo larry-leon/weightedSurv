@@ -30,6 +30,11 @@ devtools::load_all()
 devtools::check()
 
 
+devtools::clean_dll()
+
+# In terminal
+# rm -r man/
+
 
 usethis::use_git()
 
