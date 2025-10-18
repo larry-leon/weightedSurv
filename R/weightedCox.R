@@ -262,7 +262,6 @@ cox_score_rhogamma <- function(beta, time, delta, z, w_hat = rep(1,length(time))
 #' @family weighted_tests
 #' @importFrom stats confint var pnorm
 #' @export
-
 cox_rhogamma <- function(dfcount, scheme = "fh", scheme_params = list(rho = 0, gamma = 0.5), draws = 0, alpha = 0.05, verbose = FALSE, lr.digits = 4) {
 # Extract weights for Cox estimation to align with weights functions
 

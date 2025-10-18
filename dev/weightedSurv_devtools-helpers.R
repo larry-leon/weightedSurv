@@ -28,14 +28,10 @@ devtools::load_all()
 
 # Step 6: Check the package
 devtools::check()
-
-
 devtools::clean_dll()
 
 # In terminal
 # rm -r man/
-
-
 usethis::use_git()
 
 #usethis::use_github()
@@ -45,6 +41,11 @@ usethis::use_git()
 
 # Or  access hidden files:  mypackage::my_function
 
+# Notes
+Every \item in a \describe{} block must have both a label and a description.
+Do not leave a lone \item{...} without {...} after it.
+Do not next \item inside another \item
+Use plain text, dashes, or a single paragraph for subpoints.
 
 
 
