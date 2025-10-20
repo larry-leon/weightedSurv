@@ -1739,7 +1739,7 @@ df2 &lt;- res_out$results_sims[, c(&#39;Scenario&#39;, z_cols_nondebiased)]
 long_df2 &lt;- tidyr::pivot_longer(df2, cols = -Scenario, names_to = &#39;z_stat&#39;, values_to = &#39;z_value&#39;)
 
 # Custom order: group main and _mine variants together
-# For example logrankz denotes simtrial log-rank and fh00z_mine is based on weightedSurv
+# For example logrankz denotes simtrial log-rank and fh00z_mine is based on weightedsurv
 
 z_main &lt;- c(&#39;logrankz&#39;, &#39;fh00z_mine&#39;, &#39;fh05z&#39;, &#39;fh05z_mine&#39;,&#39;fh01z&#39;, &#39;fh01z_mine&#39;,
             &#39;mb6z&#39;, &#39;mb6z_mine&#39;, &#39;mb12z&#39;, &#39;mb12z_mine&#39;, &#39;fhe1z&#39;, &#39;fhe2z&#39;, &#39;t601z&#39;)

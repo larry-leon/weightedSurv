@@ -9,7 +9,7 @@ output:
 knitr::opts_chunk$set(echo = TRUE, warning = FALSE, messages = FALSE)
 rm(list=ls())
 library(survival)
-library(weightedSurv)
+library(weightedsurv)
 library(tinytex)
 
 library(dplyr)
@@ -388,7 +388,7 @@ df2 <- res_out$results_sims[, c('Scenario', z_cols_nondebiased)]
 long_df2 <- tidyr::pivot_longer(df2, cols = -Scenario, names_to = 'z_stat', values_to = 'z_value')
 
 # Custom order: group main and _mine variants together
-# For example logrankz denotes simtrial log-rank and fh00z_mine is based on weightedSurv
+# For example logrankz denotes simtrial log-rank and fh00z_mine is based on weightedsurv
 
 z_main <- c('logrankz', 'fh00z_mine', 'fh05z', 'fh05z_mine','fh01z', 'fh01z_mine',
             'mb6z', 'mb6z_mine', 'mb12z', 'mb12z_mine', 'fhe1z', 'fhe2z', 't601z')

@@ -1,4 +1,4 @@
-Package: weightedSurv
+Package: weightedsurv
 Title: Survival Analysis with Subject-Specific (Case Weights) and Time-Dependent Weighting
 Version: 0.1.0
 Authors@R: 
@@ -32,6 +32,6 @@ Suggests:
   pammtools,
   rmarkdown,
   survminer
-URL: https://github.com/larry-leon/weightedSurv
-BugReports: https://github.com/larry-leon/weightedSurv/issues
+URL: https://github.com/larry-leon/weightedsurv
+BugReports: https://github.com/larry-leon/weightedsurv/issues
 VignetteBuilder: knitr

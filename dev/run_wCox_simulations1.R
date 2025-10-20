@@ -1,6 +1,6 @@
 rm(list=ls())
 library(survival)
-library(weightedSurv)
+library(weightedsurv)
 
 library(gsDesign2)
 library(dplyr)

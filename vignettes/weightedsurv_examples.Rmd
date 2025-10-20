@@ -12,7 +12,7 @@ vignette: >
 
 # Overview
 
-In this draft vignette of the `weightedSurv` package [@weightedSurv] we illustrate various weighted survival analyses with two breast cancer datasets available in the base R `survival` library [@survival] both evaluating hormon replacement therapy in comparison to chemotherapy.  The 
+In this draft vignette of the `weightedsurv` package [@weightedsurv] we illustrate various weighted survival analyses with two breast cancer datasets available in the base R `survival` library [@survival] both evaluating hormon replacement therapy in comparison to chemotherapy.  The 
 `gbsg` trial [@gbsg1994] was randomized, whereas the `rotterdam` study [@royston2013external] was observational; Wherein for comparisons of the non-randomized therapy, in contrast to un-adjusted comparisons, propensity-score adjustment [@cole2004adjusted] appears to suggest a stronger impact consistent with the randomized trial.
 
 # Survival Analysis and KM Plotting 
@@ -146,8 +146,8 @@ Key Features
 library(survival)
 # to install weightedKMplots
 # library(devtools)
-# github_install("larry-leon/weightedSurv")
-library(weightedSurv)
+# github_install("larry-leon/weightedsurv")
+library(weightedsurv)
 library(dplyr)
 ```
 
