@@ -4,7 +4,7 @@ library(devtools)
 # Step 1: Create the package structure
 # This will create the template directory
 # with Rproject setup
-#usethis::create_package(".. /GitHub/weightedSurv")
+#usethis::create_package(".. /GitHub/weightedsurv")
 
 # Copy functions into R directory
 # Step 3: Add README and MIT license

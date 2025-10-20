@@ -15,7 +15,7 @@ library(tinytex)
 library(dplyr)
 library(data.table)
 library(gt)
-library(weightedSurv)
+library(weightedsurv)
 
 ```
 
