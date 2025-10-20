@@ -18,7 +18,6 @@ desc::desc_set_dep("survival", file = "DESCRIPTION")
 
 # Step 5: Generate documentation
 # Also, run this if revising R files such as @importFrom
-
 # clean up old documentation
 unlink("man/*.Rd")
 
