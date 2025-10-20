@@ -26,8 +26,8 @@ devtools::document()
 
 devtools::load_all()
 
-# Step 6: Check the package
 devtools::check()
+
 devtools::clean_dll()
 
 # In terminal
