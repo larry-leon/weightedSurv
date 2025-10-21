@@ -44,11 +44,10 @@
 #' }
 #'
 #' @examples
-#' \dontrun{
 #' library(survival)
-#' data(veteran)
+#' str(veteran)
 #' veteran$treat <- as.numeric(veteran$trt) - 1
-#' 
+#'
 #' # Basic analysis
 #' result <- df_counting(
 #'   df = veteran,
@@ -56,10 +55,10 @@
 #'   event.name = "status",
 #'   treat.name = "treat"
 #' )
-#' 
+#'
 #' # Plot results
 #' plot_weighted_km(result)
-#' 
+#'
 #' # Weighted log-rank emphasizing late differences
 #' result_fh <- df_counting(
 #'   df = veteran,
@@ -69,7 +68,6 @@
 #'   scheme = "fh",
 #'   scheme_params = list(rho = 0, gamma = 1)
 #' )
-#' }
 #'
 #' @references
 #' Fleming, T. R. and Harrington, D. P. (1991). Counting Processes and Survival Analysis. Wiley.

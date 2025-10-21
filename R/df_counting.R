@@ -77,10 +77,9 @@
 #' }
 #'
 #' @examples
-#' \dontrun{
 #' # Basic survival analysis
 #' library(survival)
-#' data(veteran)
+#' str(veteran)
 #' veteran$treat <- as.numeric(veteran$trt) - 1
 #'
 #' result <- df_counting(
@@ -113,7 +112,6 @@
 #'   treat.name = "treat",
 #'   strata.name = "celltype"
 #' )
-#' }
 #'
 #' @seealso
 #' \code{\link[survival]{coxph}}, \code{\link[survival]{survdiff}}, \code{\link[survival]{survfit}}
