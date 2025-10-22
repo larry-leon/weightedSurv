@@ -90,7 +90,6 @@ w_mb <- wt.rg.S(surv, scheme = "MB", mb_tstar = 12, tpoints = time)
 # Standard log-rank (equal weights)
 w_lr <- wt.rg.S(surv, scheme = "fh", rho = 0, gamma = 0)
 
-\donttest{
 # Plotting examples
 plot(time, w_fh01, type = "l", main = "FH(0,1) Weights")
 plot(time, w_mb, type = "l", main = "MB(12) Weights")
@@ -99,7 +98,6 @@ plot(time, w_mb, type = "l", main = "MB(12) Weights")
 plot(time, w_lr, type = "l", ylim = c(0, 2))
 lines(time, w_fh01, col = "blue")
 legend("topleft", c("Log-rank", "FH(0,1)"), col = 1:2, lty = 1)
-}
 
 }
 \references{

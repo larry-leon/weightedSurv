@@ -58,9 +58,8 @@ The package supports multiple weighting schemes for log-rank tests:
 }
 
 \examples{
-\dontrun{
 library(survival)
-data(veteran)
+str(veteran)
 veteran$treat <- as.numeric(veteran$trt) - 1
 
 # Basic analysis
@@ -83,7 +82,6 @@ result_fh <- df_counting(
   scheme = "fh",
   scheme_params = list(rho = 0, gamma = 1)
 )
-}
 
 }
 \references{

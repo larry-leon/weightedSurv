@@ -14,7 +14,7 @@ KM_diff(
   alpha = 0.05,
   seedstart = 8316951,
   draws = 0,
-  risk.points,
+  risk.points = NULL,
   draws.band = 0,
   tau.seq = 0.25,
   qtau = 0.025,
@@ -96,9 +96,8 @@ Treatment must be coded as 0=control, 1=experimental. Event must be binary (0/1)
 }
 
 \examples{
-\dontrun{
 library(survival)
-data(veteran)
+str(veteran)
 veteran$treat <- as.numeric(veteran$trt) - 1
 
 # Basic KM difference
@@ -122,7 +121,6 @@ result_band <- KM_diff(
   draws.band = 1000,
   modify_tau = TRUE
 )
-}
 
 }
 \seealso{

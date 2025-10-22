@@ -368,9 +368,8 @@ resampling_survival <- function(U, W, D, at.points, draws.band, surv, G_draws) {
 #' @note Treatment must be coded as 0=control, 1=experimental. Event must be binary (0/1).
 #'
 #' @examples
-#' \dontrun{
 #' library(survival)
-#' data(veteran)
+#' str(veteran)
 #' veteran$treat <- as.numeric(veteran$trt) - 1
 #'
 #' # Basic KM difference
@@ -394,7 +393,6 @@ resampling_survival <- function(U, W, D, at.points, draws.band, surv, G_draws) {
 #'   draws.band = 1000,
 #'   modify_tau = TRUE
 #' )
-#' }
 #'
 #' @seealso
 #' \code{\link{df_counting}} for full survival analysis
@@ -409,7 +407,7 @@ resampling_survival <- function(U, W, D, at.points, draws.band, surv, G_draws) {
 #' @export
 
 KM_diff <- function(df, tte.name = "tte", event.name = "event", treat.name = "treat", weight.name=NULL, at_points = sort(df[[tte.name]]), alpha = 0.05, seedstart = 8316951, draws = 0,
-                    risk.points, draws.band = 0, tau.seq = 0.25, qtau = 0.025, show_resamples = TRUE, modify_tau = FALSE) {
+                    risk.points = NULL, draws.band = 0, tau.seq = 0.25, qtau = 0.025, show_resamples = TRUE, modify_tau = FALSE) {
 
   required_cols <- c(tte.name, event.name, treat.name)
   missing_cols <- setdiff(required_cols, names(df))

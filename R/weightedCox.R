@@ -219,10 +219,9 @@ cox_score_rhogamma <- function(beta, time, delta, z, w_hat = rep(1,length(time))
 #' @note The treatment variable in \code{dfcount} must be coded as 0=control, 1=experimental.
 #'
 #' @examples
-#' \dontrun{
 #' # First get counting process data
 #' library(survival)
-#' data(veteran)
+#' str(veteran)
 #' veteran$treat <- as.numeric(veteran$trt) - 1
 #'
 #' dfcount <- df_counting(
@@ -247,7 +246,6 @@ cox_score_rhogamma <- function(beta, time, delta, z, w_hat = rep(1,length(time))
 #' # Compare asymptotic and resampling CIs
 #' print(fit$hr_ci_asy)
 #' print(fit$hr_ci_star)
-#' }
 #'
 #' @seealso
 #' \code{\link{df_counting}} for preprocessing

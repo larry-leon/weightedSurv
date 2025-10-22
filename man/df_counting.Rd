@@ -144,10 +144,9 @@ For stratified analyses, stratum-specific estimates are computed and combined ap
 }
 
 \examples{
-\dontrun{
 # Basic survival analysis
 library(survival)
-data(veteran)
+str(veteran)
 veteran$treat <- as.numeric(veteran$trt) - 1
 
 result <- df_counting(
@@ -180,7 +179,6 @@ result_strat <- df_counting(
   treat.name = "treat",
   strata.name = "celltype"
 )
-}
 
 }
 \references{
